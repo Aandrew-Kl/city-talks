@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# City Talks
 
-## Getting Started
+Πλατφόρμα συζητήσεων για Τοπική Αυτοδιοίκηση & Έξυπνες Πόλεις.
 
-First, run the development server:
+## Stack
+
+Next.js 16, React 19, TypeScript (strict), Tailwind CSS 4, markdown+gray-matter content.
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local  # fill in required vars
+npm run dev                  # open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run dev` / `npm run build` / `npm run start` / `npm run lint` / `npm run test`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Content
 
-## Learn More
+Articles live in `content/articles/*.md` with frontmatter:
 
-To learn more about Next.js, take a look at the following resources:
+```yaml
+---
+title: "Τίτλος άρθρου"
+slug: "url-friendly-slug"
+date: "2026-04-22"
+category: "opinions"               # or "smart-cities"
+excerpt: "Σύντομη περίληψη για listings και OG tags."
+image: "/article-images/slug.jpg"  # goes in public/article-images/
+author: "Όνομα Αρθρογράφου"
+---
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Images live in `public/article-images/` — featured image at `public/article-images/<slug>.jpg`; inline images under `public/article-images/<slug>/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Routes
 
-## Deploy on Vercel
+- `/` — homepage (hero, IA grid, featured 6, lets-talk CTA, newsletter)
+- `/opinions`, `/smart-cities` — category listings
+- `/articles/[slug]` — individual articles (SSG)
+- `/lets-talk`, `/podcasts` — interaction pages
+- `/api/contact`, `/api/newsletter` — POST handlers (zod-validated, honeypot, structured logs)
+- `/robots.txt`, `/sitemap.xml`, `/feed.xml` — SEO surfaces
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Env
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `.env.example`. `NEXT_PUBLIC_SITE_URL` must match production.
+
+## Deploy
+
+Any Next-compatible host (Vercel recommended). Build: `npm run build`.
+
+## Note on Next.js 16
+
+This is NOT the Next.js you (or AI agents) might know from training data. It has breaking changes. See `AGENTS.md` and the local docs at `node_modules/next/dist/docs/`.

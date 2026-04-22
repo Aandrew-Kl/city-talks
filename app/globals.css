@@ -1,26 +1,272 @@
 @import "tailwindcss";
 
+/*
+ * City Talks design tokens
+ * Extracted from https://city-talks.gr Elementor "kit-9" live CSS.
+ * Source theme: Liquid Themes "Hub" (wp-content/themes/hub + hub-child) + Elementor.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette */
+  --ct-primary: #6D0F78;
+  --ct-primary-700: #5A0C64;
+  --ct-primary-300: #8A3E93;
+  --ct-secondary: #0F786D;
+  --ct-secondary-light: #0FBBB4;
+  --ct-accent: #EB7556;
+  --ct-accent-warm: #FDC14C;
+
+  /* Text / ink */
+  --ct-ink: #0D060E;
+  --ct-ink-2: #202020;
+  --ct-text: #4E4F62;
+  --ct-text-muted: #7A7A7A;
+  --ct-text-subtle: #494B5D;
+
+  /* Surfaces */
+  --ct-bg: #FFFFFF;
+  --ct-bg-alt: #F2F2F2;
+  --ct-bg-soft: #F0F0F0;
+  --ct-border: #EAEAEA;
+
+  /* Foreground on primary */
+  --ct-on-primary: #FFFFFF;
+  --ct-on-primary-soft: rgba(255, 255, 255, 0.85);
+
+  /* Typography — Inter (Latin+Greek) is the primary face;
+     WP originals were Be Vietnam (body) + Ubuntu (headings) + Archivo Black (H2) + DM Serif Text (accent). */
+  --ct-font-body: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --ct-font-head: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ct-font-display: var(--font-inter), "Archivo Black", "Ubuntu", system-ui, sans-serif;
+  --ct-font-accent: "DM Serif Text", "DM Serif Display", Georgia, serif;
+
+  /* Type scale — matches live WP kit */
+  --ct-fs-body: 17px;
+  --ct-fs-body-lg: 18px;
+  --ct-fs-small: 14px;
+  --ct-fs-h1: 55px;
+  --ct-fs-h2: 50px;
+  --ct-fs-h3: 42px;
+  --ct-fs-h4: 32px;
+  --ct-fs-h5: 22px;
+  --ct-fs-h6: 10px;
+  --ct-fs-hero: 65px;
+  --ct-lh-tight: 1em;
+  --ct-lh-base: 1.29em;
+  --ct-lh-loose: 1.7;
+
+  /* Layout */
+  --ct-radius-sm: 4px;
+  --ct-radius-md: 10px;
+  --ct-radius-pill: 9999px;
+  --ct-shadow-sm: 0 1px 2px rgba(13, 6, 14, 0.05);
+  --ct-shadow-md: 0 8px 24px rgba(13, 6, 14, 0.08);
+  --ct-container: 1200px;
+  --ct-header-h: 110px;
+  --ct-section-py: 80px;
+
+  /* Legacy aliases so existing Tailwind classes (bg-background, text-foreground) keep working */
+  --background: var(--ct-bg);
+  --foreground: var(--ct-ink);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--ct-bg);
+  --color-foreground: var(--ct-ink);
+  --color-primary: var(--ct-primary);
+  --color-secondary: var(--ct-secondary);
+  --color-accent: var(--ct-accent);
+  --color-muted: var(--ct-text-muted);
+  --color-border: var(--ct-border);
+  --color-surface: var(--ct-bg-alt);
+  --font-sans: var(--ct-font-body);
+  --font-display: var(--ct-font-head);
+  --font-accent: var(--ct-font-accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ct-bg);
+  color: var(--ct-text);
+  font-family: var(--ct-font-body);
+  font-size: var(--ct-fs-body);
+  line-height: var(--ct-lh-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ct-font-head);
+  color: var(--ct-ink);
+  line-height: var(--ct-lh-tight);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: clamp(34px, 5.5vw, var(--ct-fs-h1)); letter-spacing: -0.4px; font-weight: 500; }
+h2 { font-size: clamp(28px, 4.5vw, var(--ct-fs-h2)); letter-spacing: -0.5px; font-weight: 500; font-family: var(--ct-font-display); }
+h3 { font-size: clamp(24px, 3.5vw, var(--ct-fs-h3)); font-weight: 900; }
+h4 { font-size: clamp(22px, 2.5vw, var(--ct-fs-h4)); font-weight: 500; }
+h5 { font-size: var(--ct-fs-h5); font-weight: 500; }
+h6 { font-size: var(--ct-fs-h6); font-weight: 500; text-transform: uppercase; letter-spacing: 1.1px; }
+
+a {
+  color: var(--ct-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--ct-primary-700);
+}
+
+/* ---------------------------------------------------------------
+ * Layout chrome — header / drawer / hero / footer rotator
+ * --------------------------------------------------------------- */
+
+.ct-header {
+  height: var(--ct-header-h);
+  border-bottom: 1px solid transparent;
+}
+.ct-header[data-scrolled="true"] {
+  height: 70px;
+  box-shadow: var(--ct-shadow-sm);
+  border-bottom-color: var(--ct-border);
+}
+
+.ct-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background-color: var(--ct-primary);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.2s ease;
+}
+.ct-nav-link:hover::after,
+.ct-nav-link[data-active="true"]::after {
+  transform: scaleX(1);
+}
+.ct-nav-link[data-active="true"] {
+  color: var(--ct-primary);
+}
+
+/* Drawer — slides from left */
+.ct-drawer {
+  pointer-events: none;
+}
+.ct-drawer[data-open="true"] {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.ct-drawer-overlay {
+  pointer-events: none;
+}
+.ct-drawer-overlay[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero decorative particles */
+.ct-hero-particle {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.7;
+  filter: blur(0.2px);
+}
+.ct-hero-particle--teal {
+  top: 18%;
+  left: 6%;
+  width: 14px;
+  height: 14px;
+  background: var(--ct-secondary-light);
+  animation: ct-float 9s ease-in-out infinite;
+}
+.ct-hero-particle--yellow {
+  top: 22%;
+  right: 8%;
+  width: 18px;
+  height: 18px;
+  background: var(--ct-accent-warm);
+  animation: ct-float 11s ease-in-out infinite reverse;
+}
+.ct-hero-particle--coral {
+  bottom: 15%;
+  left: 18%;
+  width: 10px;
+  height: 10px;
+  background: var(--ct-accent);
+  animation: ct-float 8s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+@media (max-width: 640px) {
+  .ct-hero-particle--teal { top: 10%; left: 8%; }
+  .ct-hero-particle--yellow { top: 12%; right: 10%; }
+  .ct-hero-particle--coral { bottom: 8%; left: 12%; }
+}
+
+@keyframes ct-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-14px) translateX(6px); }
+}
+
+/* Footer rotating keyword — pure CSS, no JS */
+.ct-rotate-heading {
+  position: relative;
+  line-height: 1.05;
+  max-width: 720px;
+}
+.ct-rotator {
+  min-height: 1em;
+  white-space: nowrap;
+  color: var(--ct-accent-warm);
+}
+.ct-rotator-word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  animation: ct-rotate-word 9s infinite;
+}
+.ct-rotator-spacer {
+  visibility: hidden;
+}
+@keyframes ct-rotate-word {
+  0%, 27%   { opacity: 1; transform: translateY(0); }
+  33%, 94%  { opacity: 0; transform: translateY(-8px); }
+  100%      { opacity: 0; transform: translateY(-8px); }
+}
+
+/* Reduced motion — disable floating + rotating animations */
+@media (prefers-reduced-motion: reduce) {
+  .ct-hero-particle,
+  .ct-rotator-word {
+    animation: none;
+  }
+  .ct-rotator-word:first-child {
+    opacity: 1;
+  }
+}
+
+/* Article prose — Agent B renders markdown into .ct-prose; reserve the class now
+   so any body content rendered inside layout still inherits sensible spacing. */
+.ct-prose > * + * {
+  margin-top: 1.1em;
+}
+.ct-prose h2,
+.ct-prose h3 {
+  margin-top: 1.6em;
+}
+.ct-prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ct-prose img {
+  border-radius: var(--ct-radius-md);
 }

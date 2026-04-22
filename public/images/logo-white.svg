@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 38" width="170" height="38" role="img" aria-label="City Talks">
+  <text x="0" y="27" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="26" letter-spacing="-0.5" fill="#FFFFFF">City</text>
+  <circle cx="66" cy="20" r="3.2" fill="#0FBBB4"/>
+  <text x="76" y="27" font-family="DM Serif Text, Georgia, serif" font-style="italic" font-weight="400" font-size="26" fill="#FFFFFF">Talks.</text>
+</svg>
