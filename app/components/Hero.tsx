@@ -100,23 +100,25 @@ export default function Hero(props: HeroProps = {}) {
             style={{ maxWidth: "var(--ct-container)" }}
           >
             <h1
-              className="ct-hero-headline font-[family-name:var(--ct-font-display)] text-white"
+              className="ct-hero-headline font-[family-name:var(--ct-font-display)]"
               style={{
                 fontSize: "clamp(64px, 10vw, 140px)",
                 lineHeight: 1,
                 letterSpacing: "-0.02em",
                 fontWeight: 500,
-                textShadow: "0 4px 18px rgba(13,6,14,0.35)",
+                color: "#ffffff",
+                textShadow: "0 6px 24px rgba(13,6,14,0.55), 0 2px 6px rgba(13,6,14,0.4)",
               }}
             >
               City Talks.
             </h1>
             <p
-              className="mt-6 max-w-xl text-white/95"
+              className="mt-6 max-w-xl"
               style={{
                 fontSize: "clamp(18px, 1.6vw, 24px)",
                 fontWeight: 500,
-                textShadow: "0 2px 10px rgba(13,6,14,0.35)",
+                color: "rgba(255,255,255,0.96)",
+                textShadow: "0 3px 14px rgba(13,6,14,0.55)",
               }}
             >
               Your Opinion Matters!
