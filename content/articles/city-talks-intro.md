@@ -5,7 +5,7 @@ category: "opinions"
 excerpt: "Λίγοι άνθρωποι, ένα ποσοστό πολύ μικρό του συνολικού πληθυσμού, γνωρίζει με αρκετή ακρίβεια ποιες είναι οι αρμοδιότητες ενός Δήμου."
 image: "/article-images/city-talks-intro.jpg"
 slug: "city-talks-intro"
-author: "admin"
+author: "City Talks"
 ---
 ![](/article-images/city-talks-intro/city-talks-000-1.jpg)
 

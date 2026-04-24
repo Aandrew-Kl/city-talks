@@ -158,3 +158,54 @@ export const footerMenu: readonly NavItem[] = [
   { href: "/lets-talk", label: "Lets Talk" },
   { href: "/podcasts", label: "Podcasts" },
 ] as const;
+
+/**
+ * Marquee items under "Let's Talk" — two rows alternate filled + outlined,
+ * matching the live WP hero scroll strips.
+ */
+export const marqueeItems = {
+  row1: [
+    "Smart Cities.",
+    "Destination Branding.",
+    "Civil Protection.",
+  ],
+  row2: [
+    "Τοπική Αυτοδιοίκηση.",
+    "Επιδοτήσεις.",
+    "Καθημερινότητα του Δημότη.",
+  ],
+} as const;
+
+/**
+ * Upcoming podcast episodes shown under the countdown.
+ * Dates mirror the live site's #staytuned strip.
+ */
+export const upcomingEpisodes = [
+  { date: "13.01.25" },
+  { date: "17.01.25" },
+  { date: "20.01.25" },
+  { date: "24.01.25" },
+  { date: "29.01.25" },
+] as const;
+
+/**
+ * Three editorial principles shown at the bottom of the homepage.
+ * Copy verbatim from the live WP site.
+ */
+export const principles = [
+  {
+    n: "01",
+    body:
+      "Γράφουμε για τους Δήμους, συζητάμε για τις πόλεις μας, αναλύουμε τη διοίκηση, τις πολιτικές και τις υπηρεσίες που αφορούν τους δημότες. Εξερευνούμε την καθημερινότητα, την πολιτιστική ταυτότητα και τις προκλήσεις του αστικού περιβάλλοντος.",
+  },
+  {
+    n: "02",
+    body:
+      "Άνθρωποι της Αυτοδιοίκησης καταθέτουν τις απόψεις τους, παρουσιάζουν προτάσεις για τη βελτίωση των δημοτικών υπηρεσιών και την ανάπτυξη των κοινοτήτων — ενισχύοντας τον διάλογο και προάγοντας τη δημοκρατία στο τοπικό επίπεδο.",
+  },
+  {
+    n: "03",
+    body:
+      "Οι απόψεις δε λογοκρίνονται. Κάθε συντάκτης έχει την ελευθερία να εκφράζει τις ιδέες του — ένας πλούσιος διάλογος όπου διαφορετικές φωνές εμπλουτίζουν τη συζήτηση και τη δημοκρατική έκφραση.",
+  },
+] as const;

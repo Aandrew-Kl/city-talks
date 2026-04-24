@@ -32,14 +32,13 @@
   --ct-on-primary: #FFFFFF;
   --ct-on-primary-soft: rgba(255, 255, 255, 0.85);
 
-  /* Typography — Inter (Latin+Greek) is the primary face;
-     WP originals were Be Vietnam (body) + Ubuntu (headings) + Archivo Black (H2) + DM Serif Text (accent). */
+  /* Typography */
   --ct-font-body: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --ct-font-head: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --ct-font-display: var(--font-inter), "Archivo Black", "Ubuntu", system-ui, sans-serif;
   --ct-font-accent: "DM Serif Text", "DM Serif Display", Georgia, serif;
 
-  /* Type scale — matches live WP kit */
+  /* Type scale */
   --ct-fs-body: 17px;
   --ct-fs-body-lg: 18px;
   --ct-fs-small: 14px;
@@ -64,7 +63,6 @@
   --ct-header-h: 110px;
   --ct-section-py: 80px;
 
-  /* Legacy aliases so existing Tailwind classes (bg-background, text-foreground) keep working */
   --background: var(--ct-bg);
   --foreground: var(--ct-ink);
 }
@@ -85,6 +83,7 @@
 
 html {
   color-scheme: light;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -121,7 +120,7 @@ a:hover {
 }
 
 /* ---------------------------------------------------------------
- * Layout chrome — header / drawer / hero / footer rotator
+ * Header / drawer
  * --------------------------------------------------------------- */
 
 .ct-header {
@@ -155,68 +154,569 @@ a:hover {
   color: var(--ct-primary);
 }
 
-/* Drawer — slides from left */
-.ct-drawer {
-  pointer-events: none;
-}
-.ct-drawer[data-open="true"] {
-  transform: translateX(0);
-  pointer-events: auto;
-}
-.ct-drawer-overlay {
-  pointer-events: none;
-}
-.ct-drawer-overlay[data-open="true"] {
-  opacity: 1;
-  pointer-events: auto;
+.ct-drawer { pointer-events: none; }
+.ct-drawer[data-open="true"] { transform: translateX(0); pointer-events: auto; }
+.ct-drawer-overlay { pointer-events: none; }
+.ct-drawer-overlay[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+/* ---------------------------------------------------------------
+ * Hero: white-painted brick wall + animated speech bubbles
+ * Mortar is a warm cream; bricks are staggered row-by-row (half-brick
+ * offset on alternating rows) with a subtle shadow bevel + painted-wall
+ * wash, approximating the live WP texture with zero asset dependency.
+ * --------------------------------------------------------------- */
+
+.ct-brick-bg {
+  --brick-w: 132px;
+  --brick-h: 46px;
+  --mortar: 3px;
+  --mortar-color: #d2c7b4;
+  --mortar-shadow: rgba(146, 122, 84, 0.18);
+  --brick-base: #f4eee2;
+  --brick-highlight: #fbf6ec;
+  --brick-shadow: rgba(170, 145, 105, 0.2);
+
+  position: relative;
+  background-color: var(--brick-base);
+  /* Layered gradients, bottom-most first in `background-image`:
+   *   4) Cooler shadow wash (bottom-right)
+   *   3) Warm highlight wash (top-left)
+   *   2) Vertical joint layer for ODD rows (painted only on the 2nd half of
+   *      the 2-row tile, via a conic-ish gradient that clips rows 0..brick-h)
+   *   1) Vertical joint layer for EVEN rows (painted only on 1st half)
+   *   0) Horizontal mortar lines — full-width, repeats every brick-h
+   *
+   * To clip each row of the tile we multiply the vertical-joint gradient by
+   * a horizontal band mask using linear-gradient in the y direction. We do
+   * that by layering TWO gradients on the same layer via `background-image`
+   * — CSS masks would be cleaner but are less widely supported in combo
+   * with multiple backgrounds. Instead we use a trick: the vertical-joint
+   * linear-gradient is stacked with a horizontal band of transparency.
+   */
+  background-image:
+    /* Row 0: horizontal mortar joints across every row */
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--brick-h) - var(--mortar)),
+      var(--mortar-color) calc(var(--brick-h) - var(--mortar)),
+      var(--mortar-color) var(--brick-h)
+    ),
+    /* Row-1 vertical joints — paint verticals on EVEN rows only (top half of
+       the 2-row tile), transparent on the ODD row below. */
+    linear-gradient(
+      to bottom,
+      var(--mortar-color) 0,
+      var(--mortar-color) calc(var(--brick-h) - var(--mortar)),
+      transparent calc(var(--brick-h) - var(--mortar)),
+      transparent calc(var(--brick-h) * 2)
+    ),
+    /* Row-2 vertical joints — paint verticals on ODD rows only (bottom half
+       of the tile), transparent on EVEN row above. Half-brick x-offset. */
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--brick-h),
+      var(--mortar-color) var(--brick-h),
+      var(--mortar-color) calc(var(--brick-h) * 2 - var(--mortar)),
+      transparent calc(var(--brick-h) * 2 - var(--mortar))
+    ),
+    /* Warm highlight wash */
+    radial-gradient(ellipse at 25% 20%, var(--brick-highlight) 0%, transparent 55%),
+    /* Cooler shadow wash */
+    radial-gradient(ellipse at 85% 95%, var(--brick-shadow) 0%, transparent 60%);
+  /* Sizes: horizontal mortar is full-width × brick-h (repeats each row).
+     Vertical joints: width × (2 × brick-h), i.e. a 2-row tall tile, but
+     the gradient only paints opaque mortar in ONE of the two rows and leaves
+     the other transparent (achieved by the stops above). */
+  background-size:
+    100% var(--brick-h),
+    var(--brick-w) calc(var(--brick-h) * 2),
+    var(--brick-w) calc(var(--brick-h) * 2),
+    100% 100%,
+    100% 100%;
+  /* The odd-row vertical joints need the x-axis shifted by half a brick
+     so joints in odd rows land between joints in even rows. */
+  background-position:
+    0 0,
+    0 0,
+    calc(var(--brick-w) / -2) 0,
+    0 0,
+    0 0;
 }
 
-/* Hero decorative particles */
-.ct-hero-particle {
+/* The linear-gradient trick above paints the vertical mortar all the way
+ * across the tile width, because linear-gradient(to bottom, …) creates
+ * FULL-WIDTH horizontal bands. For vertical joints we actually need narrow
+ * vertical STRIPES. Use a pair of crossed gradients — one horizontal
+ * narrow band for the joint width, one vertical band for the row mask —
+ * combined as a conic/linear image. That's hard to express in pure CSS
+ * multi-backgrounds, so we trade fidelity for simplicity: paint vertical
+ * joints as thin stripes that repeat horizontally, then use a row mask via
+ * ::before.
+ *
+ * NOTE: the styles above keep the horizontal mortar. We recreate the
+ * vertical joints cleanly in ::before using CSS masks/patterns.
+ */
+.ct-brick-bg::before {
+  content: "";
   position: absolute;
-  border-radius: 9999px;
+  inset: 0;
   pointer-events: none;
-  z-index: -1;
+  /* Two repeating vertical-joint layers, each masked to every OTHER row by
+     a separate horizontal-band gradient. */
+  background-image:
+    /* EVEN-row joint column: narrow vertical strip, repeats every brick-w,
+       clipped to the top row of each 2-row tile. */
+    repeating-linear-gradient(
+      to right,
+      var(--mortar-color) 0,
+      var(--mortar-color) var(--mortar),
+      transparent var(--mortar),
+      transparent var(--brick-w)
+    ),
+    /* ODD-row joint column: same, but offset by half a brick-w. */
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(var(--brick-w) / 2 - var(--mortar) / 2),
+      var(--mortar-color) calc(var(--brick-w) / 2 - var(--mortar) / 2),
+      var(--mortar-color) calc(var(--brick-w) / 2 + var(--mortar) / 2),
+      transparent calc(var(--brick-w) / 2 + var(--mortar) / 2),
+      transparent var(--brick-w)
+    );
+  /* Mask each gradient to every OTHER row. WebKit-prefixed + standard. */
+  -webkit-mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      black 0,
+      black calc(var(--brick-h) - var(--mortar)),
+      transparent calc(var(--brick-h) - var(--mortar)),
+      transparent var(--brick-h),
+      transparent var(--brick-h),
+      transparent calc(var(--brick-h) * 2)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--brick-h),
+      black var(--brick-h),
+      black calc(var(--brick-h) * 2 - var(--mortar)),
+      transparent calc(var(--brick-h) * 2 - var(--mortar)),
+      transparent calc(var(--brick-h) * 2)
+    );
+  -webkit-mask-composite: source-over;
+  mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      black 0,
+      black calc(var(--brick-h) - var(--mortar)),
+      transparent calc(var(--brick-h) - var(--mortar)),
+      transparent var(--brick-h),
+      transparent var(--brick-h),
+      transparent calc(var(--brick-h) * 2)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--brick-h),
+      black var(--brick-h),
+      black calc(var(--brick-h) * 2 - var(--mortar)),
+      transparent calc(var(--brick-h) * 2 - var(--mortar)),
+      transparent calc(var(--brick-h) * 2)
+    );
+  mask-composite: add;
+  /* Use mask layer index matching each bg layer */
+  -webkit-mask-size: 100% calc(var(--brick-h) * 2), 100% calc(var(--brick-h) * 2);
+  mask-size: 100% calc(var(--brick-h) * 2), 100% calc(var(--brick-h) * 2);
+}
+
+/* A faint painted-brick inner bevel on every brick — gives the wall a bit
+   of organic texture instead of looking like pure CSS grid. */
+.ct-brick-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(255, 255, 255, 0.5), transparent 70%);
+  background-size: var(--brick-w) var(--brick-h);
+  background-position: 0 0;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+}
+
+/* A coarse noise speckle to break up banding at large sizes. */
+.ct-brick-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1.5px);
+  background-size: 5px 5px, 9px 9px;
+  background-position: 0 0, 2px 3px;
   opacity: 0.7;
-  filter: blur(0.2px);
+  mix-blend-mode: overlay;
 }
-.ct-hero-particle--teal {
-  top: 18%;
-  left: 6%;
-  width: 14px;
-  height: 14px;
-  background: var(--ct-secondary-light);
-  animation: ct-float 9s ease-in-out infinite;
-}
-.ct-hero-particle--yellow {
-  top: 22%;
-  right: 8%;
-  width: 18px;
-  height: 18px;
-  background: var(--ct-accent-warm);
-  animation: ct-float 11s ease-in-out infinite reverse;
-}
-.ct-hero-particle--coral {
-  bottom: 15%;
-  left: 18%;
-  width: 10px;
-  height: 10px;
-  background: var(--ct-accent);
-  animation: ct-float 8s ease-in-out infinite;
-  animation-delay: 1.5s;
-}
+
 @media (max-width: 640px) {
-  .ct-hero-particle--teal { top: 10%; left: 8%; }
-  .ct-hero-particle--yellow { top: 12%; right: 10%; }
-  .ct-hero-particle--coral { bottom: 8%; left: 12%; }
+  .ct-brick-bg {
+    --brick-w: 96px;
+    --brick-h: 36px;
+  }
 }
 
-@keyframes ct-float {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-14px) translateX(6px); }
+/* Speech-bubble blobs — each has a short tail pointing down-left, so the
+ * layered cluster reads as a swarm of speech-bubble thought clouds rather
+ * than pure blobs. `--tail-rot` (CSS var) lets individual bubbles override
+ * the tail direction; the JS sets this inline.
+ */
+.ct-bubble {
+  position: absolute;
+  border-radius: 58% 42% 62% 38% / 55% 45% 55% 45%;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+  filter: blur(0.2px) drop-shadow(0 4px 18px rgba(13, 6, 14, 0.08));
+  animation: ct-bubble-float var(--ct-bubble-dur, 14s) ease-in-out infinite;
+  animation-delay: var(--ct-bubble-delay, 0s);
+  will-change: transform;
+}
+.ct-bubble::before {
+  /* Speech-bubble tail — a small teardrop pointing down-left */
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  left: 14%;
+  width: 22%;
+  height: 26%;
+  background: inherit;
+  border-radius: 50% 50% 10% 70% / 65% 35% 50% 50%;
+  transform: rotate(var(--ct-bubble-tail, -24deg));
+}
+.ct-bubble::after {
+  /* A soft highlight glint on the top-left */
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 18%;
+  width: 26%;
+  height: 18%;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  filter: blur(6px);
+  pointer-events: none;
 }
 
-/* Footer rotating keyword — pure CSS, no JS */
+@keyframes ct-bubble-float {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25%  { transform: translate(6px, -14px) rotate(1.5deg) scale(1.02); }
+  50%  { transform: translate(-4px, -24px) rotate(-1.5deg) scale(1.015); }
+  75%  { transform: translate(-8px, -12px) rotate(1deg) scale(1); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+/* ---------------------------------------------------------------
+ * Side labels — vertical rotated text "info@city-talks.gr" + "scroll"
+ * --------------------------------------------------------------- */
+
+.ct-side-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.24em;
+  text-transform: lowercase;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ct-ink);
+  white-space: nowrap;
+}
+
+.ct-scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ct-scroll-indicator::before {
+  content: "";
+  width: 1px;
+  height: 48px;
+  background: var(--ct-ink-2);
+}
+.ct-scroll-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ct-ink);
+  animation: ct-scroll-dot 2.4s ease-in-out infinite;
+}
+@keyframes ct-scroll-dot {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(10px); opacity: 0.4; }
+}
+
+/* ---------------------------------------------------------------
+ * Marquee — filled + stroke (outline) text scrolling
+ * --------------------------------------------------------------- */
+
+.ct-marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+.ct-marquee-track {
+  display: flex;
+  gap: 2.2rem;
+  white-space: nowrap;
+  width: max-content;
+  animation: ct-marquee 28s linear infinite;
+  will-change: transform;
+}
+.ct-marquee-track[data-reverse="true"] {
+  animation-direction: reverse;
+}
+@keyframes ct-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ct-marquee-text {
+  font-family: var(--ct-font-display);
+  font-weight: 900;
+  font-size: clamp(72px, 13vw, 180px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ct-ink);
+  padding: 0 0.4em;
+  /* Prevents stroked text from looking cut off at descender tails */
+  paint-order: stroke fill;
+}
+.ct-marquee-text--outline {
+  color: transparent;
+  /* 2px at large sizes reads as a clean outline rather than a hairline */
+  -webkit-text-stroke: 2px var(--ct-ink);
+  text-stroke: 2px var(--ct-ink);
+}
+@media (max-width: 900px) {
+  .ct-marquee-text--outline {
+    -webkit-text-stroke-width: 1.25px;
+    text-stroke-width: 1.25px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-marquee-track { animation: none; }
+}
+
+/* ---------------------------------------------------------------
+ * Articles alternating blocks — circle image, author pill, decorations
+ * --------------------------------------------------------------- */
+
+.ct-article-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+  padding-block: clamp(56px, 8vw, 112px);
+  position: relative;
+}
+.ct-article-row[data-flip="true"] > .ct-article-row-media {
+  grid-column: 2;
+}
+.ct-article-row[data-flip="true"] > .ct-article-row-body {
+  grid-column: 1;
+  grid-row: 1;
+}
+@media (max-width: 900px) {
+  .ct-article-row { grid-template-columns: 1fr; }
+  .ct-article-row[data-flip="true"] > .ct-article-row-media,
+  .ct-article-row[data-flip="true"] > .ct-article-row-body {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+.ct-article-row-media {
+  position: relative;
+  aspect-ratio: 4/5;
+  max-width: 520px;
+  width: 100%;
+  justify-self: center;
+}
+.ct-article-image {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--ct-bg-alt);
+}
+.ct-article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ct-author-pill {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  background: var(--ct-secondary);
+  color: var(--ct-on-primary);
+  padding: 10px 22px;
+  border-radius: var(--ct-radius-pill);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  z-index: 3;
+  box-shadow: 0 6px 18px rgba(15, 120, 109, 0.25);
+}
+
+.ct-decor-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(109, 15, 120, 0.22);
+  pointer-events: none;
+}
+.ct-decor-circle--solid {
+  border-style: solid;
+  border-color: rgba(13, 6, 14, 0.1);
+}
+/* Dot grid — matches the live shape-1.svg (10×10 grid of #ea75c5 dots) */
+.ct-decor-dots {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  background-image: radial-gradient(#ea75c5 1.6px, transparent 2.2px);
+  background-size: 9.6px 9.6px;
+  background-position: 2px 2px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.ct-decor-dots--purple {
+  background-image: radial-gradient(var(--ct-primary) 1.6px, transparent 2.2px);
+  opacity: 0.55;
+}
+/* Slow rotating double-ring — matches the live shape-2.svg decoration */
+.ct-decor-ring {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: ct-ring-spin 40s linear infinite;
+}
+.ct-decor-ring svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@keyframes ct-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-decor-ring { animation: none; }
+}
+
+/* ---------------------------------------------------------------
+ * Countdown
+ * --------------------------------------------------------------- */
+
+.ct-countdown {
+  display: grid;
+  grid-template-columns: repeat(7, auto);
+  align-items: start;
+  justify-content: center;
+  gap: clamp(6px, 1.6vw, 18px) clamp(8px, 2vw, 28px);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.ct-countdown-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(56px, 9vw, 96px);
+}
+.ct-countdown-num {
+  font-family: var(--ct-font-display);
+  font-weight: 900;
+  font-size: clamp(56px, 9vw, 112px);
+  line-height: 0.9;
+  color: var(--ct-ink);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.ct-countdown-sep {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(56px, 9vw, 112px);
+  font-family: var(--ct-font-display);
+  font-weight: 900;
+  font-size: clamp(48px, 7.5vw, 88px);
+  line-height: 0.9;
+  color: var(--ct-primary);
+  letter-spacing: -0.02em;
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+.ct-countdown-label {
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ct-text-subtle);
+}
+@media (max-width: 520px) {
+  .ct-countdown {
+    gap: 4px 10px;
+  }
+  .ct-countdown-sep {
+    font-size: clamp(40px, 12vw, 64px);
+  }
+}
+
+/* ---------------------------------------------------------------
+ * Principles numbered section
+ * --------------------------------------------------------------- */
+
+.ct-principle-num {
+  font-family: var(--ct-font-display);
+  font-weight: 900;
+  font-size: 92px;
+  line-height: 1;
+  color: var(--ct-ink);
+  opacity: 0.08;
+  letter-spacing: -0.04em;
+}
+
+/* ---------------------------------------------------------------
+ * Scroll-reveal — fade-up, triggered via IntersectionObserver
+ * --------------------------------------------------------------- */
+
+.ct-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  will-change: opacity, transform;
+}
+.ct-reveal[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+ * Footer rotating keyword
+ * --------------------------------------------------------------- */
+
 .ct-rotate-heading {
   position: relative;
   line-height: 1.05;
@@ -243,30 +743,17 @@ a:hover {
   100%      { opacity: 0; transform: translateY(-8px); }
 }
 
-/* Reduced motion — disable floating + rotating animations */
 @media (prefers-reduced-motion: reduce) {
-  .ct-hero-particle,
-  .ct-rotator-word {
+  .ct-bubble,
+  .ct-rotator-word,
+  .ct-scroll-dot {
     animation: none;
   }
-  .ct-rotator-word:first-child {
-    opacity: 1;
-  }
+  .ct-rotator-word:first-child { opacity: 1; }
 }
 
-/* Article prose — Agent B renders markdown into .ct-prose; reserve the class now
-   so any body content rendered inside layout still inherits sensible spacing. */
-.ct-prose > * + * {
-  margin-top: 1.1em;
-}
-.ct-prose h2,
-.ct-prose h3 {
-  margin-top: 1.6em;
-}
-.ct-prose a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.ct-prose img {
-  border-radius: var(--ct-radius-md);
-}
+/* Article prose */
+.ct-prose > * + * { margin-top: 1.1em; }
+.ct-prose h2, .ct-prose h3 { margin-top: 1.6em; }
+.ct-prose a { text-decoration: underline; text-underline-offset: 3px; }
+.ct-prose img { border-radius: var(--ct-radius-md); }

@@ -1,63 +1,142 @@
-import { siteMeta } from "@/app/data";
+import BigLogoMark from "@/app/components/BigLogoMark";
+
+/**
+ * Hero — has two visual modes:
+ *
+ *   (a) Homepage: white-painted brick wall + giant CityTalks mic logo +
+ *       animated multi-color speech-bubble cluster. Triggered with no props.
+ *   (b) Secondary pages (`/lets-talk` etc.): compact headline + intro
+ *       paragraphs on plain background. Triggered by `compact` prop.
+ *
+ * All animations are pure CSS (see globals.css). Each bubble gets a unique
+ * duration / delay / tail rotation so the cluster drifts organically
+ * instead of bobbing in lock-step.
+ */
 
 export interface HeroProps {
-  /** Override the default homepage headline. Defaults to siteMeta.heroHeadline. */
-  headline?: string;
-  /** Override intro paragraphs. Defaults to siteMeta.heroIntro. */
-  intro?: readonly string[];
-  /**
-   * Compact variant renders a shorter hero band — used by non-homepage pages
-   * (e.g. /lets-talk, /podcasts) that want the same visual language but less weight.
-   */
+  /** Render the compact headline/intro variant (used on /lets-talk). */
   compact?: boolean;
+  headline?: string;
+  intro?: string[];
+}
+
+interface HeroBubble {
+  top: string;
+  left?: string;
+  right?: string;
+  w: number;
+  h: number;
+  color: string;
+  delay: number;
+  /** animation duration in seconds */
+  dur: number;
+  /** speech-bubble tail rotation in degrees */
+  tail: number;
+}
+
+// Ordered back-to-front so later bubbles stack on top.
+const BUBBLES: HeroBubble[] = [
+  { top: "8%",  left: "6%",  w: 240, h: 220, color: "#1E88E5", delay: 0.0, dur: 15, tail: -30 },
+  { top: "4%",  left: "22%", w: 340, h: 280, color: "#0F786D", delay: 0.8, dur: 17, tail: -18 },
+  { top: "20%", left: "35%", w: 300, h: 260, color: "#1A237E", delay: 1.5, dur: 14, tail: -40 },
+  { top: "34%", left: "24%", w: 260, h: 220, color: "#E91E63", delay: 2.2, dur: 18, tail: -12 },
+  { top: "24%", left: "50%", w: 280, h: 240, color: "#E53935", delay: 2.8, dur: 16, tail: -26 },
+  { top: "6%",  left: "60%", w: 360, h: 300, color: "#FDC14C", delay: 3.4, dur: 19, tail: -20 },
+  { top: "40%", right: "8%", w: 220, h: 200, color: "#0FBBB4", delay: 4.0, dur: 13, tail: -34 },
+];
+
+export default function Hero(props: HeroProps = {}) {
+  if (props.compact) {
+    return <CompactHero headline={props.headline} intro={props.intro} />;
+  }
+
+  return (
+    <section
+      aria-label="City Talks"
+      className="ct-hero relative isolate w-full overflow-hidden"
+    >
+      <div
+        className="ct-brick-bg relative mx-auto w-full overflow-hidden"
+        style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
+      >
+        {/* Speech-bubble cluster — floats behind the central mic logo */}
+        {BUBBLES.map((b, i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className="ct-bubble"
+            style={{
+              top: b.top,
+              left: b.left,
+              right: b.right,
+              width: `clamp(${Math.round(b.w * 0.5)}px, ${b.w / 12}vw, ${b.w}px)`,
+              height: `clamp(${Math.round(b.h * 0.5)}px, ${b.h / 12}vw, ${b.h}px)`,
+              background: b.color,
+              // CSS custom properties consumed by .ct-bubble in globals.css
+              ["--ct-bubble-delay" as string]: `${b.delay}s`,
+              ["--ct-bubble-dur" as string]: `${b.dur}s`,
+              ["--ct-bubble-tail" as string]: `${b.tail}deg`,
+            }}
+          />
+        ))}
+
+        {/* Soft edge vignette — pushes brick texture to the background */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 55%, transparent 40%, rgba(246,241,233,0.55) 85%)",
+          }}
+        />
+
+        {/* Giant centered mic-logo */}
+        <div
+          className="relative z-10 flex h-full w-full items-center justify-center"
+          style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
+        >
+          <BigLogoMark />
+        </div>
+      </div>
+    </section>
+  );
 }
 
 /**
- * Homepage hero. Centered white band with:
- *   H1 "Ας μιλήσουμε για τους Δήμους, ας κάνουμε City Talks!"
- *   + 2 paragraphs of intro copy
- *   + decorative teal + yellow particles (pure CSS, absolutely positioned).
- *
- * Server component — no interactivity needed.
+ * Compact variant — used on /lets-talk and similar secondary pages.
+ * Plain white background, H1 + intro paragraphs, no brick, no bubbles.
  */
-export default function Hero({
-  headline = siteMeta.heroHeadline,
-  intro = siteMeta.heroIntro,
-  compact = false,
-}: HeroProps) {
+function CompactHero({
+  headline,
+  intro,
+}: {
+  headline?: string;
+  intro?: string[];
+}) {
   return (
     <section
-      className="ct-hero relative isolate w-full overflow-hidden bg-[color:var(--ct-bg)]"
-      aria-labelledby="hero-heading"
-      data-variant={compact ? "compact" : "default"}
+      aria-label={headline}
+      className="relative w-full bg-[color:var(--ct-bg)]"
     >
-      {/* Decorative particles — teal + coral + yellow, scattered behind content */}
-      <span aria-hidden="true" className="ct-hero-particle ct-hero-particle--teal" />
-      <span aria-hidden="true" className="ct-hero-particle ct-hero-particle--yellow" />
-      <span aria-hidden="true" className="ct-hero-particle ct-hero-particle--coral" />
-
       <div
-        className="relative mx-auto flex flex-col items-center gap-6 px-5 text-center sm:px-8"
-        style={{
-          maxWidth: "var(--ct-container)",
-          paddingTop: compact ? "72px" : "clamp(72px, 10vw, 140px)",
-          paddingBottom: compact ? "48px" : "clamp(56px, 8vw, 96px)",
-        }}
+        className="mx-auto flex flex-col gap-6 px-5 pb-8 pt-20 sm:px-8 sm:pt-28"
+        style={{ maxWidth: "var(--ct-container)" }}
       >
-        <p className="inline-flex items-center gap-2 rounded-full border border-[color:var(--ct-border)] bg-[color:var(--ct-bg-alt)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.1px] text-[color:var(--ct-text-subtle)]">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--ct-primary)]" />
-          {siteMeta.greekTagline}
-        </p>
-
-        <h1
-          id="hero-heading"
-          className="mx-auto max-w-[960px] font-[family-name:var(--ct-font-display)] text-[color:var(--ct-ink)]"
-        >
-          {headline}
-        </h1>
-
-        {intro.length > 0 && (
-          <div className="mx-auto flex max-w-[780px] flex-col gap-4 text-[17px] leading-[1.7] text-[color:var(--ct-text)]">
+        {headline && (
+          <h1
+            className="font-[family-name:var(--ct-font-display)] text-[color:var(--ct-ink)]"
+            style={{
+              fontSize: "clamp(36px, 6vw, 72px)",
+              lineHeight: 1.04,
+              letterSpacing: "-0.01em",
+              fontWeight: 500,
+            }}
+          >
+            {headline}
+          </h1>
+        )}
+        {intro && intro.length > 0 && (
+          <div className="flex max-w-[760px] flex-col gap-4 text-[18px] leading-[1.7] text-[color:var(--ct-text)]">
             {intro.map((para, i) => (
               <p key={i}>{para}</p>
             ))}

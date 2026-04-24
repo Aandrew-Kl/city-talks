@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
+import SideLabels from "@/app/components/SideLabels";
 import { siteMeta, socialLinks } from "@/app/data";
 
 import "./globals.css";
@@ -106,6 +107,7 @@ export default function RootLayout({
     <html lang="el" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-[color:var(--ct-bg)]">
         <Header />
+        <SideLabels />
         <main id="main-content" className="flex-1">
           {children}
         </main>

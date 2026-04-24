@@ -1,36 +1,31 @@
-import Articles from "@/app/components/Articles";
+import AlternatingArticles from "@/app/components/AlternatingArticles";
+import BrickLogoBanner from "@/app/components/BrickLogoBanner";
 import Hero from "@/app/components/Hero";
-import IconBoxGrid from "@/app/components/IconBoxGrid";
-import LetsTalk from "@/app/components/LetsTalk";
+import HomeIntro from "@/app/components/HomeIntro";
+import LetsTalkFull from "@/app/components/LetsTalkFull";
 import Newsletter from "@/app/components/Newsletter";
 
 /**
- * City Talks homepage.
- *
- * Section order (matches WP home):
- *   1. Hero
- *   2. 4-card IconBoxGrid IA row (Opinions / Let's Talk / Podcasts / Smart Cities)
- *   3. Featured articles (Agent B — imports <Articles limit={6} /> once it lands)
- *   4. Lets Talk partnership CTA (Agent C)
- *   5. Footer (in layout.tsx)
- *
- * Agent A owns 1 + 2 + the shell; Agents B/C drop their components into the
- * marked slots in follow-up commits.
+ * City Talks homepage — structure matches https://city-talks.gr exactly:
+ *   1. Brick hero with mic logo + animated speech bubbles
+ *   2. Intro (headline + 2 paragraphs + 4-card IconBoxGrid)
+ *   3. Articles eyebrow + 6 alternating L/R blocks
+ *   4. Let's Talk: marquee(×2) + countdown + episodes + "let's talk!" + principles
+ *   5. Brick banner with mic logo (repeat)
+ *   6. Newsletter strip
  */
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <IconBoxGrid />
-
-      <Articles limit={6} />
-
-
-      <LetsTalk />
+      <HomeIntro />
+      <AlternatingArticles limit={6} />
+      <LetsTalkFull />
+      <BrickLogoBanner />
 
       <section
         aria-label="Newsletter signup"
-        className="relative w-full bg-[color:var(--ct-bg)] pb-20 sm:pb-24"
+        className="relative w-full bg-[color:var(--ct-bg)] py-20"
       >
         <div
           className="mx-auto px-5 sm:px-8"
