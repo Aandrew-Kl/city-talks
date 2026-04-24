@@ -13,6 +13,7 @@ import {
   getAllArticleSummaries,
   getArticleBySlug,
 } from "@/lib/articles";
+import { withBasePath } from "@/lib/basePath";
 
 interface PageParams {
   slug: string;
@@ -234,7 +235,7 @@ export default async function ArticlePage(
       >
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[var(--ct-radius-md)] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)]">
           <Image
-            src={article.image}
+            src={withBasePath(article.image)}
             alt={article.title}
             fill
             sizes="(min-width: 1200px) 1200px, 100vw"

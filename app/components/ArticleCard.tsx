@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { categories, type CategorySlug } from "@/app/data";
 import { formatGreekDate } from "@/lib/articles";
+import { withBasePath } from "@/lib/basePath";
 
 export interface ArticleCardData {
   title: string;
@@ -45,7 +46,7 @@ export default function ArticleCard({ article, priority = false }: ArticleCardPr
         aria-label={article.title}
       >
         <Image
-          src={article.image}
+          src={withBasePath(article.image)}
           alt={article.title}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

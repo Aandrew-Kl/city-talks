@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { categories, type CategorySlug } from "@/app/data";
 import { formatGreekDate } from "@/lib/articles";
+import { withBasePath } from "@/lib/basePath";
 
 export interface ArticleRowData {
   title: string;
@@ -53,7 +54,7 @@ export default function ArticleRow({
         }`}
       >
         <Image
-          src={article.image}
+          src={withBasePath(article.image)}
           alt={article.title}
           fill
           sizes="(min-width: 1024px) 560px, (min-width: 640px) 50vw, 100vw"

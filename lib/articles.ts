@@ -90,7 +90,18 @@ function assertFrontmatter(
 
 async function renderMarkdown(body: string): Promise<string> {
   const processed = await remark().use(html, { sanitize: false }).process(body);
-  return processed.toString();
+  let out = processed.toString();
+
+  // Prefix basePath (e.g. `/city-talks` on GitHub Pages) onto any absolute
+  // image/link paths so they still resolve under the subpath deploy.
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  if (basePath) {
+    out = out.replace(
+      /(<(?:img|a)\b[^>]*?\s(?:src|href)=)(["'])\/(?!\/|city-talks\/)/g,
+      `$1$2${basePath}/`,
+    );
+  }
+  return out;
 }
 
 async function loadArticle(file: string): Promise<Article> {

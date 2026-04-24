@@ -4,6 +4,7 @@ import Link from "next/link";
 import Reveal from "@/app/components/Reveal";
 import { categories, type CategorySlug } from "@/app/data";
 import { getAllArticleSummaries } from "@/lib/articles";
+import { withBasePath } from "@/lib/basePath";
 
 export interface AlternatingArticlesProps {
   limit?: number;
@@ -115,7 +116,7 @@ export default async function AlternatingArticles({
                   className="relative block h-full w-full overflow-hidden rounded-[28px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)]"
                 >
                   <Image
-                    src={a.image}
+                    src={withBasePath(a.image)}
                     alt={a.title}
                     fill
                     sizes="(min-width: 900px) 45vw, 90vw"
