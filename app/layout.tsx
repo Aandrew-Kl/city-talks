@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import ExtraCursor from "@/app/components/ExtraCursor";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import SideLabels from "@/app/components/SideLabels";
@@ -106,6 +107,7 @@ export default function RootLayout({
   return (
     <html lang="el" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-[color:var(--ct-bg)]">
+        <ExtraCursor />
         <Header />
         <SideLabels />
         <main id="main-content" className="flex-1">

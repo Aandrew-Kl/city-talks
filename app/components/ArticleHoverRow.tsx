@@ -20,10 +20,14 @@ export interface ArticleHoverRowProps {
 }
 
 /**
- * One L/R alternating article block with the live-site hover reveal:
- *   • default: decorative purple blob + dashed outline circle + dot grid
- *   • on hover: featured photo fades in as a rounded rectangle, circular
- *     author portrait fades in on top, green author pill stays anchored.
+ * One L/R alternating article block matching the live city-talks.gr
+ * hover trick:
+ *   • Default view: decorative purple filled bean + dashed outline circle
+ *     + pink dot grid. NO photos.
+ *   • On hover / focus of the row: the purple bean fades out, a rounded
+ *     rectangle featured photo fades in, and (if we have one) a circular
+ *     author portrait fades in overlapping the photo's bottom-left corner.
+ *     The green author pill sits at the bottom centre of the portrait.
  */
 export default function ArticleHoverRow({
   flip,
@@ -49,7 +53,7 @@ export default function ArticleHoverRow({
       onBlur={() => setHover(false)}
     >
       <div className="ct-article-row-media">
-        {/* Decorative background stack (always visible) */}
+        {/* --- Decorative layer (visible before hover) --- */}
         <span
           aria-hidden="true"
           className="ct-decor-dots"
@@ -62,36 +66,36 @@ export default function ArticleHoverRow({
         />
         <span
           aria-hidden="true"
-          className="ct-decor-circle"
+          className="absolute rounded-full"
           style={{
-            width: "108%",
-            height: "108%",
-            top: "-4%",
-            left: "-4%",
-            opacity: 0.35,
+            width: "116%",
+            height: "116%",
+            top: "-8%",
+            left: "-8%",
+            border: "1px dashed rgba(234, 117, 197, 0.55)",
+            pointerEvents: "none",
           }}
         />
-        {/* Purple filled blob — present before hover, mutes on hover */}
         <span
           aria-hidden="true"
           className="absolute rounded-full"
           style={{
-            width: "62%",
-            height: "46%",
-            top: "-6%",
-            right: flip ? "auto" : "-8%",
-            left: flip ? "-8%" : "auto",
+            width: "70%",
+            height: "62%",
+            top: "8%",
+            right: flip ? "auto" : "-6%",
+            left: flip ? "-6%" : "auto",
             background: "var(--ct-primary)",
             transition: "opacity 0.45s ease",
             opacity: hover ? 0 : 1,
           }}
         />
 
-        {/* Featured image — hidden by default, fades in on hover */}
+        {/* --- Featured photo (fades in on hover) --- */}
         <Link
           href={href}
           aria-label={title}
-          className="relative block h-full w-full overflow-hidden rounded-[24px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)] transition-opacity duration-500 ease-out"
+          className="absolute inset-0 block overflow-hidden rounded-[28px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)] transition-opacity duration-500 ease-out"
           style={{ opacity: hover ? 1 : 0 }}
         >
           <Image
@@ -103,17 +107,17 @@ export default function ArticleHoverRow({
           />
         </Link>
 
-        {/* Circular author portrait — only if provided, fades in on hover */}
+        {/* --- Circular author portrait (fades in on hover) --- */}
         {authorPortrait && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute rounded-full overflow-hidden border-[4px] border-white shadow-[0_12px_28px_rgba(13,6,14,0.25)] transition-opacity duration-500 ease-out"
+            className="pointer-events-none absolute overflow-hidden rounded-full border-[5px] border-white shadow-[0_14px_32px_rgba(13,6,14,0.28)] transition-opacity duration-500 ease-out"
             style={{
-              width: "40%",
-              height: "48%",
-              bottom: "10%",
-              left: flip ? "auto" : "6%",
-              right: flip ? "6%" : "auto",
+              width: "46%",
+              aspectRatio: "1",
+              bottom: "6%",
+              left: flip ? "auto" : "8%",
+              right: flip ? "8%" : "auto",
               opacity: hover ? 1 : 0,
             }}
           >
@@ -121,14 +125,32 @@ export default function ArticleHoverRow({
               src={withBasePath(authorPortrait)}
               alt={author}
               fill
-              sizes="(min-width: 900px) 18vw, 40vw"
+              sizes="(min-width: 900px) 22vw, 46vw"
               className="object-cover object-top"
             />
           </span>
         )}
 
-        {/* Green author pill — always visible */}
-        <span className="ct-author-pill">{author}</span>
+        {/* --- Green author pill (always visible, below portrait) --- */}
+        <span
+          className="absolute z-10"
+          style={{
+            bottom: "-18px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "10px 22px",
+            borderRadius: "9999px",
+            background: "var(--ct-secondary)",
+            color: "var(--ct-on-primary)",
+            fontSize: "15px",
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+            whiteSpace: "nowrap",
+            boxShadow: "0 6px 18px rgba(15, 120, 109, 0.25)",
+          }}
+        >
+          {author}
+        </span>
       </div>
 
       <div className="ct-article-row-body flex flex-col gap-5">
