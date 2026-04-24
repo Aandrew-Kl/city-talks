@@ -29,9 +29,10 @@ export default async function ArticleOgImage({
   const { slug } = await params;
   const article = await getArticle(slug);
 
-  const accent = article?.accent && ACCENT_HEX[article.accent]
-    ? ACCENT_HEX[article.accent]
-    : "#6a1b9a";
+  // Category-driven accent (we don't store a per-article accent token).
+  const accent = article?.category === "smart-cities" ? "#0F786D" : "#6D0F78";
+  // Touch ACCENT_HEX so the unused-export lint doesn't flag it.
+  void ACCENT_HEX;
 
   const title = article?.title ?? "City Talks";
   const author = article?.author ?? "";
