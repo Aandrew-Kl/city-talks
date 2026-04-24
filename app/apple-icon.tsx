@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-static";
+
 /**
  * 180×180 Apple touch icon — the image iOS uses when the site is added to
  * the home screen. Same mark as `icon.tsx` but scaled up with more

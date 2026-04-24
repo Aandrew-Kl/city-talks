@@ -6,6 +6,8 @@
  * the default export (plus the metadata config) from `opengraph-image.tsx`
  * keeps the two routes in lockstep.
  */
+export const dynamic = "force-static";
+
 export {
   alt,
   contentType,

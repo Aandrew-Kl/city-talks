@@ -29,19 +29,37 @@ const LEGACY_PAGES = [
   "homepage-2",
 ];
 
+// When GITHUB_PAGES=true we build a fully static site (no API routes,
+// no image optimization, basePath matches the repo name for
+// <owner>.github.io/<repo>/). Local `npm run dev` and Vercel keep the
+// regular server-rendering flow.
+const isGhPages = process.env.GITHUB_PAGES === "true";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  ...(isGhPages
+    ? {
+        output: "export" as const,
+        basePath: "/city-talks",
+        assetPrefix: "/city-talks",
+        trailingSlash: true,
+      }
+    : {}),
 
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "city-talks.gr", pathname: "/wp-content/uploads/**" },
-      { protocol: "https", hostname: "i0.wp.com", pathname: "/**" },
-      { protocol: "https", hostname: "i1.wp.com", pathname: "/**" },
-      { protocol: "https", hostname: "i2.wp.com", pathname: "/**" },
-    ],
-  },
+  images: isGhPages
+    ? { unoptimized: true }
+    : {
+        remotePatterns: [
+          { protocol: "https", hostname: "city-talks.gr", pathname: "/wp-content/uploads/**" },
+          { protocol: "https", hostname: "i0.wp.com", pathname: "/**" },
+          { protocol: "https", hostname: "i1.wp.com", pathname: "/**" },
+          { protocol: "https", hostname: "i2.wp.com", pathname: "/**" },
+        ],
+      },
 
   async redirects() {
+    // `output: export` forbids redirects — skip entirely in GH Pages mode.
+    if (isGhPages) return [];
     return [
       // WP category archives → unified Next.js routes
       { source: "/blog", destination: "/opinions", permanent: true },

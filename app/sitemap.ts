@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getAllArticleSummaries as getAllArticleMetas } from "../lib/articles";
 
+// Required for `output: export` — force fully static generation.
+export const dynamic = "force-static";
+
 const BASE =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://city-talks.gr";
 

@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { getAllArticleSummaries as getAllArticleMetas, getArticleBySlug as getArticle } from "../../../lib/articles";
 
+export const dynamic = "force-static";
+
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "City Talks — άρθρο";
