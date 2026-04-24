@@ -96,7 +96,8 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <Link
               href="/lets-talk#contact"
-              className="ct-send-pill hidden h-11 items-center justify-center rounded-full bg-[color:var(--ct-primary)] px-5 text-[14px] font-semibold text-[color:var(--ct-on-primary)] transition-colors hover:bg-[color:var(--ct-primary-700)] sm:inline-flex"
+              className="ct-send-pill hidden h-11 items-center justify-center rounded-full bg-[color:var(--ct-primary)] px-5 text-[14px] font-semibold transition-colors hover:bg-[color:var(--ct-primary-700)] sm:inline-flex"
+              style={{ color: "var(--ct-on-primary)" }}
             >
               Send message
             </Link>
