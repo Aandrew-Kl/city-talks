@@ -1,14 +1,19 @@
 
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 import { withBasePath } from "@/lib/basePath";
 
 /**
  * Hero — has two visual modes:
  *
- *   (a) Homepage: authentic brick-wall-with-speech-bubbles image from the
- *       live WP site (`/logo/hero-your-opinion.jpg`), with "City Talks."
- *       headline + "Your Opinion Matters!" subtitle overlaid.
+ *   (a) Homepage: one default photo (`/logo/hero-your-opinion.jpg`) filling
+ *       the whole hero, split visually into 4 vertical sections by white
+ *       dividers. Hovering a section swaps the photo to that category's
+ *       image (Opinions / Let's Talk / Podcasts / Smart Cities). "City
+ *       Talks." + "Your Opinion Matters!" overlay sits on top.
  *   (b) Secondary pages (`/lets-talk` etc.): compact headline + intro
  *       paragraphs on plain background. Triggered by `compact` prop.
  */
@@ -21,6 +26,8 @@ export interface HeroProps {
 }
 
 export default function Hero(props: HeroProps = {}) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   if (props.compact) {
     return <CompactHero headline={props.headline} intro={props.intro} />;
   }
@@ -31,52 +38,72 @@ export default function Hero(props: HeroProps = {}) {
       className="ct-hero relative isolate w-full overflow-hidden"
     >
       <div
-        className="relative mx-auto grid w-full grid-cols-1 overflow-hidden md:grid-cols-4"
+        className="relative mx-auto w-full overflow-hidden"
         style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
       >
-        {HERO_COLUMNS.map((col) => (
-          <a
+        {/* Stacked images — default first, each category layered on top,
+            only the one whose column is hovered is visible. */}
+        <Image
+          src={withBasePath(DEFAULT_HERO_IMAGE)}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {HERO_COLUMNS.map((col, i) => (
+          <Image
             key={col.href}
-            href={col.href}
-            aria-label={col.label}
-            className="relative block overflow-hidden border-white/90 md:border-r md:last:border-r-0"
-          >
-            <Image
-              src={withBasePath(col.image)}
-              alt={col.label}
-              fill
-              priority
-              sizes="(min-width: 900px) 25vw, 100vw"
-              className="object-cover object-center transition-transform duration-700 ease-out hover:scale-[1.04]"
-            />
-            {/* Soft wash so the label reads on any photo */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-0"
+            src={withBasePath(col.image)}
+            alt={col.label}
+            fill
+            priority={i === 0}
+            sizes="100vw"
+            className="object-cover object-center transition-opacity duration-500 ease-out"
+            style={{ opacity: hoveredIdx === i ? 1 : 0 }}
+          />
+        ))}
+
+        {/* 4 hover/click columns + vertical dividers. The <a> tags sit on
+            top of the stacked images and drive the swap via hoveredIdx. */}
+        <div className="absolute inset-0 z-10 grid grid-cols-4">
+          {HERO_COLUMNS.map((col, i) => (
+            <a
+              key={col.href}
+              href={col.href}
+              aria-label={col.label}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onFocus={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              onBlur={() => setHoveredIdx(null)}
+              className="relative block h-full"
               style={{
-                background:
-                  "linear-gradient(to bottom, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 100%)",
-              }}
-            />
-            {/* Vertical section label at bottom */}
-            <span
-              className="absolute bottom-5 left-5 z-10"
-              style={{
-                writingMode: "vertical-rl",
-                transform: "rotate(180deg)",
-                fontSize: "12px",
-                fontWeight: 600,
-                letterSpacing: "0.2em",
-                textTransform: "lowercase",
-                color: "#ffffff",
-                textShadow: "0 1px 3px rgba(0,0,0,0.55)",
-                whiteSpace: "nowrap",
+                borderRight:
+                  i < HERO_COLUMNS.length - 1
+                    ? "1px solid rgba(255,255,255,0.9)"
+                    : undefined,
               }}
             >
-              — {col.label}
-            </span>
-          </a>
-        ))}
+              {/* Per-column label at bottom, rotated vertical */}
+              <span
+                className="absolute bottom-5 left-5"
+                style={{
+                  writingMode: "vertical-rl",
+                  transform: "rotate(180deg)",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "lowercase",
+                  color: "#ffffff",
+                  textShadow: "0 1px 3px rgba(0,0,0,0.55)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                — {col.label}
+              </span>
+            </a>
+          ))}
+        </div>
 
         {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white,
             positioned top-left across the whole grid, on top of all columns. */}
@@ -119,6 +146,8 @@ export default function Hero(props: HeroProps = {}) {
     </section>
   );
 }
+
+const DEFAULT_HERO_IMAGE = "/logo/hero-your-opinion.jpg";
 
 // Per-column images downloaded from the live WP site (2024/03 uploads)
 // and stored under /public/hero/.
