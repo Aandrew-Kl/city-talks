@@ -25,6 +25,25 @@ export default function LetsTalkFull() {
         Let&apos;s Talk
       </h2>
 
+      {/* Eyebrow label — mirrors live's "— LET'S TALK" above the marquee */}
+      <div
+        className="mx-auto px-5 pb-4 sm:px-8"
+        style={{ maxWidth: "var(--ct-container)" }}
+      >
+        <p
+          className="inline-flex items-center gap-2"
+          style={{
+            fontSize: "11px",
+            fontWeight: 700,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "var(--ct-ink-2)",
+          }}
+        >
+          — Let&apos;s Talk
+        </p>
+      </div>
+
       {/* Marquee row 1 — filled */}
       <div className="ct-marquee-wrap py-4">
         <div className="ct-marquee-track">
