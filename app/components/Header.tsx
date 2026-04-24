@@ -67,9 +67,9 @@ export default function Header() {
         data-scrolled={scrolled ? "true" : "false"}
         className="ct-header sticky top-0 z-40 w-full bg-[color:var(--ct-bg)] transition-[height,box-shadow] duration-200 ease-out"
       >
-        {/* Live layout: hamburger-left · centered-ish logo · 'City Talks' link-right */}
-        <div className="relative flex h-full w-full items-center px-5 sm:px-8">
-          {/* Left: hamburger (drawer trigger) */}
+        {/* Live layout: hamburger-left · wordmark-left (after a gap) · 'City Talks' link-right */}
+        <div className="flex h-full w-full items-center gap-6 px-5 sm:px-8">
+          {/* Hamburger (drawer trigger) — small icon, top-left corner */}
           <button
             type="button"
             aria-expanded={drawerOpen}
@@ -81,23 +81,20 @@ export default function Header() {
             <svg
               aria-hidden="true"
               width="22"
-              height="12"
-              viewBox="0 0 22 12"
+              height="14"
+              viewBox="0 0 22 14"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <rect y="0" width="22" height="1.6" rx="0.8" fill="currentColor" />
-              <rect y="10" width="22" height="1.6" rx="0.8" fill="currentColor" />
+              <rect y="6" width="22" height="1.6" rx="0.8" fill="currentColor" />
+              <rect y="12" width="22" height="1.6" rx="0.8" fill="currentColor" />
             </svg>
           </button>
 
-          {/* Center: big wordmark logo */}
-          <Link
-            href="/"
-            aria-label="City Talks — αρχική"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          >
-            <Logo width={180} />
+          {/* Left-aligned wordmark logo (after the hamburger) */}
+          <Link href="/" aria-label="City Talks — αρχική" className="ml-4">
+            <Logo width={190} />
           </Link>
 
           {/* Right: simple 'City Talks' text link (mirrors live) */}
