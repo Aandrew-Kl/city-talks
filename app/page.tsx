@@ -1,5 +1,4 @@
 import AlternatingArticles from "@/app/components/AlternatingArticles";
-import BrickLogoBanner from "@/app/components/BrickLogoBanner";
 import Hero from "@/app/components/Hero";
 import HomeIntro from "@/app/components/HomeIntro";
 import LetsTalkFull from "@/app/components/LetsTalkFull";
@@ -19,7 +18,6 @@ export default function HomePage() {
       <HomeIntro />
       <AlternatingArticles limit={6} />
       <LetsTalkFull />
-      <BrickLogoBanner />
     </>
   );
 }
