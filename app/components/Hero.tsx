@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import { withBasePath } from "@/lib/basePath";
@@ -39,29 +38,24 @@ export default function Hero(props: HeroProps = {}) {
     >
       <div
         className="relative mx-auto w-full overflow-hidden"
-        style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
+        style={{
+          minHeight: "clamp(480px, 78vh, 760px)",
+          backgroundImage: `url(${withBasePath(DEFAULT_HERO_IMAGE)})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
-        {/* Stacked images — default always rendered; a hovered column's
-            photo fades in on top and hides the default beneath. */}
-        <Image
-          src={withBasePath(DEFAULT_HERO_IMAGE)}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center transition-opacity duration-500 ease-out"
-          style={{ opacity: hoveredIdx === null ? 1 : 0 }}
-        />
+        {/* Column-specific photos stacked on top of the CSS background. Only
+            the hovered column's image has opacity 1; others stay at 0. */}
         {HERO_COLUMNS.map((col, i) => (
-          <Image
+          <img
             key={col.href}
             src={withBasePath(col.image)}
             alt={col.label}
-            fill
-            priority={i === 0}
-            sizes="100vw"
-            className="object-cover object-center transition-opacity duration-500 ease-out"
+            className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500 ease-out"
             style={{ opacity: hoveredIdx === i ? 1 : 0 }}
+            loading={i === 0 ? "eager" : "lazy"}
           />
         ))}
 
