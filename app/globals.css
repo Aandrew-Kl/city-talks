@@ -96,6 +96,32 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Whole-page column divider grid — mirrors the live WP `lines-bg.svg`
+   tile which draws a faint vertical hairline every quarter of the
+   viewport, carving the page into 4 columns (Opinions · Let's Talk ·
+   Podcasts · Smart Cities) aligned with the hero bottom labels. */
+main#main-content {
+  background-image: linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(25% - 1px),
+    rgba(22, 23, 30, 0.07) calc(25% - 1px),
+    rgba(22, 23, 30, 0.07) 25%,
+    transparent 25%,
+    transparent calc(50% - 1px),
+    rgba(22, 23, 30, 0.07) calc(50% - 1px),
+    rgba(22, 23, 30, 0.07) 50%,
+    transparent 50%,
+    transparent calc(75% - 1px),
+    rgba(22, 23, 30, 0.07) calc(75% - 1px),
+    rgba(22, 23, 30, 0.07) 75%,
+    transparent 75%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-attachment: local;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--ct-font-head);
   color: inherit;
