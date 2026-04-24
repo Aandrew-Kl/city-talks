@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllArticleMetas } from "../lib/articles";
+import { getAllArticleSummaries as getAllArticleMetas } from "../lib/articles";
 
 const BASE =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://city-talks.gr";

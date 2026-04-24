@@ -1,8 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { Logo } from "./components/Logo";
+import Logo from "./components/Logo";
 
 export const metadata: Metadata = {
   title: "404 — Η σελίδα δεν βρέθηκε | City Talks",
@@ -13,11 +11,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <>
-      <Header />
-      <main className="flex-1 bg-gradient-to-br from-white via-neutral-50 to-brand-purple/5">
-        <div className="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center gap-8 px-6 py-24 text-center">
-          <Logo />
+    <main className="flex-1 bg-gradient-to-br from-white via-neutral-50 to-[color:var(--ct-primary)]/5">
+      <div className="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center gap-8 px-6 py-24 text-center">
+        <Logo />
 
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-brand-purple">
             Error 404
@@ -53,9 +49,7 @@ export default function NotFound() {
               Let&apos;s Talk
             </Link>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </>
+      </div>
+    </main>
   );
 }

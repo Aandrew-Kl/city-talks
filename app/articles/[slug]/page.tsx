@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -12,52 +14,57 @@ import {
   getArticleBySlug,
 } from "@/lib/articles";
 
-const BASE =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://city-talks.gr";
-const SITE_NAME = "City Talks";
-
-export async function generateStaticParams() {
-  const metas = await getAllArticleMetas();
-  return metas.map((m) => ({ slug: m.slug }));
+interface PageParams {
+  slug: string;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const article = await getArticle(slug);
-  if (!article) return { title: `Άρθρο | ${SITE_NAME}` };
+/**
+ * Statically generate every article at build time — there are only 12,
+ * and all slugs are known from the markdown directory.
+ */
+export function generateStaticParams(): PageParams[] {
+  return getAllArticleSlugs().map((slug) => ({ slug }));
+}
 
-  const url = `${BASE}/articles/${article.slug}`;
-  const title = `${article.title} | ${SITE_NAME}`;
-  // Per-article dynamic OG — Next will hit /articles/<slug>/opengraph-image
-  // if present; otherwise it falls back to the root OG handler.
-  const image = `${BASE}/articles/${article.slug}/opengraph-image`;
+// If a slug doesn't exist at build time, 404 instead of rendering on-demand.
+export const dynamicParams = false;
+
+export async function generateMetadata(
+  { params }: { params: Promise<PageParams> },
+): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article) {
+    return { title: "Άρθρο δεν βρέθηκε" };
+  }
+
+  const url = `${siteMeta.url}/articles/${slug}`;
 
   return {
-    title,
+    title: article.title,
     description: article.excerpt,
-    authors: [{ name: article.author }],
     alternates: { canonical: url },
     openGraph: {
       type: "article",
       locale: "el_GR",
       url,
-      siteName: SITE_NAME,
       title: article.title,
       description: article.excerpt,
       publishedTime: article.date,
       authors: [article.author],
-      section: article.category,
-      images: [{ url: image, width: 1200, height: 630, alt: article.title }],
+      images: [
+        {
+          url: article.image,
+          alt: article.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.excerpt,
-      images: [image],
+      images: [article.image],
     },
   };
 }
@@ -86,30 +93,28 @@ export default async function ArticlePage(
   { params }: { params: Promise<PageParams> },
 ) {
   const { slug } = await params;
-  const article = await getArticle(slug);
-  if (!article) notFound();
+  const article = await getArticleBySlug(slug);
 
-  const url = `${BASE}/articles/${article.slug}`;
-  const image = `${BASE}/articles/${article.slug}/opengraph-image`;
+  if (!article) {
+    notFound();
+  }
 
+  const categoryHref = `/${article.category}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    mainEntityOfPage: { "@type": "WebPage", "@id": url },
     headline: article.title,
     description: article.excerpt,
-    image: [image],
+    image: [`${siteMeta.url}${article.image}`],
     datePublished: article.date,
     dateModified: article.date,
     author: [{ "@type": "Person", name: article.author }],
+    mainEntityOfPage: `${siteMeta.url}/articles/${article.slug}`,
     publisher: {
       "@type": "Organization",
-      name: SITE_NAME,
-      url: BASE,
-      logo: { "@type": "ImageObject", url: `${BASE}/icon` },
+      name: siteMeta.name,
+      url: siteMeta.url,
     },
-    articleSection: article.category,
-    inLanguage: "el-GR",
   };
 
   // Pull up to 3 other articles in the same category for the related strip.
@@ -126,7 +131,7 @@ export default async function ArticlePage(
     >
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
+        // eslint-disable-next-line react/no-danger -- JSON-LD is generated server-side from our own trusted frontmatter
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
@@ -286,14 +291,14 @@ export default async function ArticlePage(
             </dl>
           </aside>
 
-        {/* Article body */}
-        <article className="mx-auto max-w-3xl px-6 py-16">
           <div
             className="ct-prose text-[17px] leading-[1.75] text-[color:var(--ct-text)]"
             itemProp="articleBody"
             // eslint-disable-next-line react/no-danger -- markdown is author-controlled and rendered via remark
             dangerouslySetInnerHTML={{ __html: article.contentHtml }}
           />
+        </div>
+      </section>
 
       {/* === Related articles === */}
       {related.length > 0 && (

@@ -183,6 +183,12 @@ export function formatGreekDate(date: string): string {
   });
 }
 
+/** Alias: other modules refer to this as `getAllArticleMetas`. */
+export const getAllArticleMetas = getAllArticleSummaries;
+
+/** Alias: other modules refer to this as `getArticle`. */
+export const getArticle = getArticleBySlug;
+
 function toSummary(article: Article): ArticleSummary {
   const {
     title,
