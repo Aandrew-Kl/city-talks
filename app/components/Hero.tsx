@@ -31,24 +31,57 @@ export default function Hero(props: HeroProps = {}) {
       className="ct-hero relative isolate w-full overflow-hidden"
     >
       <div
-        className="relative mx-auto w-full overflow-hidden"
+        className="relative mx-auto grid w-full grid-cols-1 overflow-hidden md:grid-cols-4"
         style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
       >
-        {/* Authentic hero background — brick wall + speech-bubble cluster
-            exported from the live WP site as one baked image. */}
-        <Image
-          src={withBasePath("/logo/hero-your-opinion.jpg")}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+        {HERO_COLUMNS.map((col) => (
+          <a
+            key={col.href}
+            href={col.href}
+            aria-label={col.label}
+            className="relative block overflow-hidden border-white/90 md:border-r md:last:border-r-0"
+          >
+            <Image
+              src={withBasePath(col.image)}
+              alt={col.label}
+              fill
+              priority
+              sizes="(min-width: 900px) 25vw, 100vw"
+              className="object-cover object-center transition-transform duration-700 ease-out hover:scale-[1.04]"
+            />
+            {/* Soft wash so the label reads on any photo */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 100%)",
+              }}
+            />
+            {/* Vertical section label at bottom */}
+            <span
+              className="absolute bottom-5 left-5 z-10"
+              style={{
+                writingMode: "vertical-rl",
+                transform: "rotate(180deg)",
+                fontSize: "12px",
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                textTransform: "lowercase",
+                color: "#ffffff",
+                textShadow: "0 1px 3px rgba(0,0,0,0.55)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              — {col.label}
+            </span>
+          </a>
+        ))}
 
         {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white,
-            positioned top-left to mirror the live-site layout exactly. */}
+            positioned top-left across the whole grid, on top of all columns. */}
         <div
-          className="relative z-10 flex h-full w-full"
+          className="pointer-events-none absolute inset-0 z-20 flex"
           style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
         >
           <div
@@ -82,36 +115,35 @@ export default function Hero(props: HeroProps = {}) {
             </p>
           </div>
         </div>
-
-        {/* Bottom section labels — rotated vertical text like the live hero.
-            Readable Greek ink on the painted-wall backdrop thanks to
-            a soft white text-shadow. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 hidden items-end justify-between px-10 md:flex">
-          {["— Opinions", "Let's Talk", "Podcasts", "Smart Cities"].map(
-            (label) => (
-              <span
-                key={label}
-                style={{
-                  writingMode: "vertical-rl",
-                  transform: "rotate(180deg)",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  letterSpacing: "0.2em",
-                  textTransform: "lowercase",
-                  color: "rgba(13,6,14,0.7)",
-                  textShadow: "0 1px 2px rgba(255,255,255,0.7)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {label}
-              </span>
-            ),
-          )}
-        </div>
       </div>
     </section>
   );
 }
+
+// Per-column images downloaded from the live WP site (2024/03 uploads)
+// and stored under /public/hero/.
+const HERO_COLUMNS: Array<{ label: string; href: string; image: string }> = [
+  {
+    label: "Opinions",
+    href: "/opinions",
+    image: "/hero/city-talks-001.jpg",
+  },
+  {
+    label: "Let's Talk",
+    href: "/lets-talk",
+    image: "/logo/hero-your-opinion.jpg",
+  },
+  {
+    label: "Podcasts",
+    href: "/podcasts",
+    image: "/hero/city-talks-03-podcast.jpg",
+  },
+  {
+    label: "Smart Cities",
+    href: "/smart-cities",
+    image: "/hero/city-talks-04-urban-smart-cities.jpg",
+  },
+];
 
 /**
  * Compact variant — used on /lets-talk and similar secondary pages.
