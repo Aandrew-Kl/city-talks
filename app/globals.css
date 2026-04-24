@@ -167,204 +167,45 @@ a:hover {
  * --------------------------------------------------------------- */
 
 .ct-brick-bg {
-  --brick-w: 132px;
-  --brick-h: 46px;
-  --mortar: 3px;
-  --mortar-color: #d2c7b4;
-  --mortar-shadow: rgba(146, 122, 84, 0.18);
   --brick-base: #f4eee2;
-  --brick-highlight: #fbf6ec;
-  --brick-shadow: rgba(170, 145, 105, 0.2);
+  --brick-shadow: rgba(170, 145, 105, 0.18);
 
   position: relative;
   background-color: var(--brick-base);
-  /* Layered gradients, bottom-most first in `background-image`:
-   *   4) Cooler shadow wash (bottom-right)
-   *   3) Warm highlight wash (top-left)
-   *   2) Vertical joint layer for ODD rows (painted only on the 2nd half of
-   *      the 2-row tile, via a conic-ish gradient that clips rows 0..brick-h)
-   *   1) Vertical joint layer for EVEN rows (painted only on 1st half)
-   *   0) Horizontal mortar lines — full-width, repeats every brick-h
-   *
-   * To clip each row of the tile we multiply the vertical-joint gradient by
-   * a horizontal band mask using linear-gradient in the y direction. We do
-   * that by layering TWO gradients on the same layer via `background-image`
-   * — CSS masks would be cleaner but are less widely supported in combo
-   * with multiple backgrounds. Instead we use a trick: the vertical-joint
-   * linear-gradient is stacked with a horizontal band of transparency.
-   */
+  /* A single tileable SVG draws the running-bond brick pattern (alternating
+   * rows offset by half a brick). Two radial washes add warmth + shadow so
+   * the wall doesn't look like a flat stamp. The SVG is kept inline with
+   * url-escaped markup so there's zero asset round-trip. */
   background-image:
-    /* Row 0: horizontal mortar joints across every row */
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--brick-h) - var(--mortar)),
-      var(--mortar-color) calc(var(--brick-h) - var(--mortar)),
-      var(--mortar-color) var(--brick-h)
-    ),
-    /* Row-1 vertical joints — paint verticals on EVEN rows only (top half of
-       the 2-row tile), transparent on the ODD row below. */
-    linear-gradient(
-      to bottom,
-      var(--mortar-color) 0,
-      var(--mortar-color) calc(var(--brick-h) - var(--mortar)),
-      transparent calc(var(--brick-h) - var(--mortar)),
-      transparent calc(var(--brick-h) * 2)
-    ),
-    /* Row-2 vertical joints — paint verticals on ODD rows only (bottom half
-       of the tile), transparent on EVEN row above. Half-brick x-offset. */
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent var(--brick-h),
-      var(--mortar-color) var(--brick-h),
-      var(--mortar-color) calc(var(--brick-h) * 2 - var(--mortar)),
-      transparent calc(var(--brick-h) * 2 - var(--mortar))
-    ),
     /* Warm highlight wash */
-    radial-gradient(ellipse at 25% 20%, var(--brick-highlight) 0%, transparent 55%),
+    radial-gradient(ellipse at 25% 18%, rgba(252, 246, 232, 0.95) 0%, transparent 55%),
     /* Cooler shadow wash */
-    radial-gradient(ellipse at 85% 95%, var(--brick-shadow) 0%, transparent 60%);
-  /* Sizes: horizontal mortar is full-width × brick-h (repeats each row).
-     Vertical joints: width × (2 × brick-h), i.e. a 2-row tall tile, but
-     the gradient only paints opaque mortar in ONE of the two rows and leaves
-     the other transparent (achieved by the stops above). */
-  background-size:
-    100% var(--brick-h),
-    var(--brick-w) calc(var(--brick-h) * 2),
-    var(--brick-w) calc(var(--brick-h) * 2),
-    100% 100%,
-    100% 100%;
-  /* The odd-row vertical joints need the x-axis shifted by half a brick
-     so joints in odd rows land between joints in even rows. */
-  background-position:
-    0 0,
-    0 0,
-    calc(var(--brick-w) / -2) 0,
-    0 0,
-    0 0;
+    radial-gradient(ellipse at 85% 95%, var(--brick-shadow) 0%, transparent 65%),
+    /* Brick pattern (270×92 tile, two staggered rows) */
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='270' height='92' viewBox='0 0 270 92'%3E%3Crect width='270' height='92' fill='%23f4eee2'/%3E%3Cg fill='none' stroke='%23d2c7b4' stroke-width='3' stroke-linecap='square'%3E%3C!-- Row A horizontal joint --%3E%3Cline x1='0' y1='46' x2='270' y2='46'/%3E%3C!-- Row B horizontal joint (bottom of tile = top of next) --%3E%3Cline x1='0' y1='92' x2='270' y2='92'/%3E%3C!-- Row A vertical joints: at 0, 135, 270 (so bricks 135 wide) --%3E%3Cline x1='0' y1='0' x2='0' y2='46'/%3E%3Cline x1='135' y1='0' x2='135' y2='46'/%3E%3Cline x1='270' y1='0' x2='270' y2='46'/%3E%3C!-- Row B vertical joints: offset by half brick (67.5, 202.5) --%3E%3Cline x1='67.5' y1='46' x2='67.5' y2='92'/%3E%3Cline x1='202.5' y1='46' x2='202.5' y2='92'/%3E%3C/g%3E%3Cg fill='rgba(255,255,255,0.35)'%3E%3C!-- Subtle highlight glint on a few bricks --%3E%3Cellipse cx='67' cy='22' rx='40' ry='10'/%3E%3Cellipse cx='202' cy='22' rx='36' ry='8'/%3E%3Cellipse cx='135' cy='68' rx='44' ry='10'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 270px 92px;
+  background-position: 0 0, 0 0, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
 }
 
-/* The linear-gradient trick above paints the vertical mortar all the way
- * across the tile width, because linear-gradient(to bottom, …) creates
- * FULL-WIDTH horizontal bands. For vertical joints we actually need narrow
- * vertical STRIPES. Use a pair of crossed gradients — one horizontal
- * narrow band for the joint width, one vertical band for the row mask —
- * combined as a conic/linear image. That's hard to express in pure CSS
- * multi-backgrounds, so we trade fidelity for simplicity: paint vertical
- * joints as thin stripes that repeat horizontally, then use a row mask via
- * ::before.
- *
- * NOTE: the styles above keep the horizontal mortar. We recreate the
- * vertical joints cleanly in ::before using CSS masks/patterns.
- */
+/* A subtle noise speckle to break up perfectly-aligned brick tiles. */
 .ct-brick-bg::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Two repeating vertical-joint layers, each masked to every OTHER row by
-     a separate horizontal-band gradient. */
+  opacity: 0.35;
+  mix-blend-mode: multiply;
   background-image:
-    /* EVEN-row joint column: narrow vertical strip, repeats every brick-w,
-       clipped to the top row of each 2-row tile. */
-    repeating-linear-gradient(
-      to right,
-      var(--mortar-color) 0,
-      var(--mortar-color) var(--mortar),
-      transparent var(--mortar),
-      transparent var(--brick-w)
-    ),
-    /* ODD-row joint column: same, but offset by half a brick-w. */
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent calc(var(--brick-w) / 2 - var(--mortar) / 2),
-      var(--mortar-color) calc(var(--brick-w) / 2 - var(--mortar) / 2),
-      var(--mortar-color) calc(var(--brick-w) / 2 + var(--mortar) / 2),
-      transparent calc(var(--brick-w) / 2 + var(--mortar) / 2),
-      transparent var(--brick-w)
-    );
-  /* Mask each gradient to every OTHER row. WebKit-prefixed + standard. */
-  -webkit-mask-image:
-    repeating-linear-gradient(
-      to bottom,
-      black 0,
-      black calc(var(--brick-h) - var(--mortar)),
-      transparent calc(var(--brick-h) - var(--mortar)),
-      transparent var(--brick-h),
-      transparent var(--brick-h),
-      transparent calc(var(--brick-h) * 2)
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent var(--brick-h),
-      black var(--brick-h),
-      black calc(var(--brick-h) * 2 - var(--mortar)),
-      transparent calc(var(--brick-h) * 2 - var(--mortar)),
-      transparent calc(var(--brick-h) * 2)
-    );
-  -webkit-mask-composite: source-over;
-  mask-image:
-    repeating-linear-gradient(
-      to bottom,
-      black 0,
-      black calc(var(--brick-h) - var(--mortar)),
-      transparent calc(var(--brick-h) - var(--mortar)),
-      transparent var(--brick-h),
-      transparent var(--brick-h),
-      transparent calc(var(--brick-h) * 2)
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent var(--brick-h),
-      black var(--brick-h),
-      black calc(var(--brick-h) * 2 - var(--mortar)),
-      transparent calc(var(--brick-h) * 2 - var(--mortar)),
-      transparent calc(var(--brick-h) * 2)
-    );
-  mask-composite: add;
-  /* Use mask layer index matching each bg layer */
-  -webkit-mask-size: 100% calc(var(--brick-h) * 2), 100% calc(var(--brick-h) * 2);
-  mask-size: 100% calc(var(--brick-h) * 2), 100% calc(var(--brick-h) * 2);
-}
-
-/* A faint painted-brick inner bevel on every brick — gives the wall a bit
-   of organic texture instead of looking like pure CSS grid. */
-.ct-brick-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(255, 255, 255, 0.5), transparent 70%);
-  background-size: var(--brick-w) var(--brick-h);
-  background-position: 0 0;
-  opacity: 0.55;
-  mix-blend-mode: soft-light;
-}
-
-/* A coarse noise speckle to break up banding at large sizes. */
-.ct-brick-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1.5px),
-    radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1.5px);
-  background-size: 5px 5px, 9px 9px;
-  background-position: 0 0, 2px 3px;
-  opacity: 0.7;
-  mix-blend-mode: overlay;
+    radial-gradient(rgba(140, 110, 70, 0.12) 1px, transparent 1.4px),
+    radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1.5px);
+  background-size: 6px 6px, 11px 11px;
+  background-position: 0 0, 3px 4px;
 }
 
 @media (max-width: 640px) {
   .ct-brick-bg {
-    --brick-w: 96px;
-    --brick-h: 36px;
+    background-size: 100% 100%, 100% 100%, 210px 72px;
   }
 }
 
