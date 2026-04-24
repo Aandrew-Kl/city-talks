@@ -39,7 +39,7 @@ export default function ExtraCursor() {
     const tick = () => {
       x += (tx - x) * 0.18;
       y += (ty - y) * 0.18;
-      el.style.transform = `translate3d(${x - 14}px, ${y - 14}px, 0)`;
+      el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -65,15 +65,17 @@ export default function ExtraCursor() {
         position: "fixed",
         top: 0,
         left: 0,
-        width: 28,
-        height: 28,
+        width: 80,
+        height: 80,
+        marginLeft: -40,
+        marginTop: -40,
         borderRadius: "50%",
         background: "var(--ct-primary)",
         pointerEvents: "none",
         zIndex: 9999,
         mixBlendMode: "multiply",
         opacity: 0,
-        transition: "opacity 0.2s ease",
+        transition: "opacity 0.25s ease, transform 0.05s linear",
         willChange: "transform",
       }}
     />

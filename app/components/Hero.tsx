@@ -111,7 +111,7 @@ export default function Hero(props: HeroProps = {}) {
             style={{ maxWidth: "var(--ct-container)" }}
           >
             <h1
-              className="ct-hero-headline font-[family-name:var(--ct-font-display)]"
+              className="ct-hero-headline font-[family-name:var(--ct-font-display)] transition-opacity duration-300 ease-out"
               style={{
                 fontSize: "clamp(48px, 7vw, 110px)",
                 lineHeight: 1,
@@ -122,10 +122,10 @@ export default function Hero(props: HeroProps = {}) {
                   "0 6px 24px rgba(13,6,14,0.55), 0 2px 6px rgba(13,6,14,0.4)",
               }}
             >
-              City Talks.
+              {hoveredIdx !== null ? HERO_COLUMNS[hoveredIdx].title : "City Talks."}
             </h1>
             <p
-              className="mt-4 max-w-xl"
+              className="mt-4 max-w-xl transition-opacity duration-300 ease-out"
               style={{
                 fontSize: "clamp(17px, 1.5vw, 22px)",
                 fontWeight: 500,
@@ -133,7 +133,9 @@ export default function Hero(props: HeroProps = {}) {
                 textShadow: "0 3px 14px rgba(13,6,14,0.55)",
               }}
             >
-              Your Opinion Matters!
+              {hoveredIdx !== null
+                ? HERO_COLUMNS[hoveredIdx].subtitle
+                : "Your Opinion Matters!"}
             </p>
           </div>
         </div>
@@ -144,28 +146,43 @@ export default function Hero(props: HeroProps = {}) {
 
 const DEFAULT_HERO_IMAGE = "/logo/hero-your-opinion.jpg";
 
-// Per-column images downloaded from the live WP site (2024/03 uploads)
-// and stored under /public/hero/.
-const HERO_COLUMNS: Array<{ label: string; href: string; image: string }> = [
+// Per-column images + title/subtitle pairs exactly as the live WP site
+// swaps them on hover. Images come from /public/hero/ (2024/03 uploads);
+// titles/subtitles were scraped from live DOM.
+const HERO_COLUMNS: Array<{
+  label: string;
+  href: string;
+  image: string;
+  title: string;
+  subtitle: string;
+}> = [
   {
     label: "Opinions",
     href: "/opinions",
     image: "/hero/city-talks-001.jpg",
+    title: "City Talks.",
+    subtitle: "Your Opinion Matters!",
   },
   {
     label: "Let's Talk",
     href: "/lets-talk",
     image: "/logo/hero-your-opinion.jpg",
+    title: "City Talks.",
+    subtitle: "Ας μιλήσουμε για τους Δήμους, ας κάνουμε City Talks!",
   },
   {
     label: "Podcasts",
     href: "/podcasts",
     image: "/hero/city-talks-03-podcast.jpg",
+    title: "Podcast City Talks.",
+    subtitle: "Ακολουθήστε τα Podcast του City Talks!",
   },
   {
     label: "Smart Cities",
     href: "/smart-cities",
     image: "/hero/city-talks-04-urban-smart-cities.jpg",
+    title: "Smart Cities.",
+    subtitle: "Έξυπνες πόλεις - Έξυπνες Ιδέες - Έξυπνοι Διάλογοι.",
   },
 ];
 
