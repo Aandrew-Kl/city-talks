@@ -126,12 +126,24 @@ export default function Hero(props: HeroProps = {}) {
           </div>
         </div>
 
-        {/* Bottom vertical section labels — mirror the live hero. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden items-end justify-between px-10 pb-6 md:flex">
-          <span className="ct-side-label text-white/85">— Opinions</span>
-          <span className="ct-side-label text-white/85">Let&apos;s Talk</span>
-          <span className="ct-side-label text-white/85">Podcasts</span>
-          <span className="ct-side-label text-white/85">Smart Cities</span>
+        {/* Bottom vertical section labels — mirror the live hero.
+            Live uses upright horizontal labels along the bottom inside the
+            hero band, not rotated text. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden items-center justify-between px-12 pb-6 md:flex">
+          {["— Opinions", "Let's Talk", "Podcasts", "Smart Cities"].map((label) => (
+            <span
+              key={label}
+              style={{
+                fontSize: "13px",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                color: "rgba(13,6,14,0.72)",
+                textShadow: "0 1px 2px rgba(255,255,255,0.6)",
+              }}
+            >
+              {label}
+            </span>
+          ))}
         </div>
       </div>
     </section>
