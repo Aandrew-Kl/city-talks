@@ -18,11 +18,27 @@ function categoryLabel(slug: CategorySlug): string {
  * green author pill, decorative circle + dotted pattern, and on the opposite
  * side: category eyebrow, huge title, excerpt, "Διαβάστε Περισσότερα" CTA.
  */
+// Live city-talks.gr home shows exactly these 6 featured articles in this
+// order. We hard-code the list so the homepage is always deterministic and
+// doesn't surface editorial/WP-admin articles that happen to be newer.
+const HOMEPAGE_SLUGS = [
+  "diaxeirisi-nerou",
+  "poleodomia-kai-dimoi",
+  "eksypnoi-dimoi-psifiaki-dimosia-ygeia",
+  "to-leksilogio-enos-aftodioikitikoy",
+  "telos-stin-tafi-aporrimmatwn",
+  "proslipseis-mono-sta-xartia",
+];
+
 export default async function AlternatingArticles({
   limit = 6,
 }: AlternatingArticlesProps) {
   const all = await getAllArticleSummaries();
-  const articles = all.slice(0, limit);
+  const bySlug = new Map(all.map((a) => [a.slug, a]));
+  const articles = HOMEPAGE_SLUGS
+    .map((s) => bySlug.get(s))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a))
+    .slice(0, limit);
   if (articles.length === 0) return null;
 
   return (

@@ -80,14 +80,14 @@ export default function ArticleHoverRow({
           aria-hidden="true"
           className="absolute rounded-full"
           style={{
-            width: "70%",
-            height: "62%",
-            top: "8%",
-            right: flip ? "auto" : "-6%",
-            left: flip ? "-6%" : "auto",
+            width: "46%",
+            height: "38%",
+            top: "4%",
+            right: flip ? "auto" : "2%",
+            left: flip ? "2%" : "auto",
             background: "var(--ct-primary)",
+            opacity: hover ? 0 : 0.92,
             transition: "opacity 0.45s ease",
-            opacity: hover ? 0 : 1,
           }}
         />
 
