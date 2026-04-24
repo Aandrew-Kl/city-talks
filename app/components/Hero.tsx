@@ -45,23 +45,23 @@ export default function Hero(props: HeroProps = {}) {
           className="object-cover object-center"
         />
 
-        {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white.
-            Sits above the bubbles image, mirroring the live-site layout. */}
+        {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white,
+            positioned top-left to mirror the live-site layout exactly. */}
         <div
-          className="relative z-10 flex h-full w-full items-center"
+          className="relative z-10 flex h-full w-full"
           style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
         >
           <div
-            className="mx-auto w-full px-8 sm:px-16 lg:px-24"
+            className="w-full px-8 pt-20 sm:px-16 sm:pt-24 lg:px-24"
             style={{ maxWidth: "var(--ct-container)" }}
           >
             <h1
               className="ct-hero-headline font-[family-name:var(--ct-font-display)]"
               style={{
-                fontSize: "clamp(64px, 10vw, 140px)",
+                fontSize: "clamp(48px, 7vw, 110px)",
                 lineHeight: 1,
                 letterSpacing: "-0.02em",
-                fontWeight: 500,
+                fontWeight: 700,
                 color: "#ffffff",
                 textShadow:
                   "0 6px 24px rgba(13,6,14,0.55), 0 2px 6px rgba(13,6,14,0.4)",
@@ -70,9 +70,9 @@ export default function Hero(props: HeroProps = {}) {
               City Talks.
             </h1>
             <p
-              className="mt-6 max-w-xl"
+              className="mt-4 max-w-xl"
               style={{
-                fontSize: "clamp(18px, 1.6vw, 24px)",
+                fontSize: "clamp(17px, 1.5vw, 22px)",
                 fontWeight: 500,
                 color: "rgba(255,255,255,0.96)",
                 textShadow: "0 3px 14px rgba(13,6,14,0.55)",

@@ -67,62 +67,47 @@ export default function Header() {
         data-scrolled={scrolled ? "true" : "false"}
         className="ct-header sticky top-0 z-40 w-full bg-[color:var(--ct-bg)] transition-[height,box-shadow] duration-200 ease-out"
       >
-        <div
-          className="mx-auto flex h-full w-full items-center justify-between gap-6 px-5 sm:px-8"
-          style={{ maxWidth: "var(--ct-container)" }}
-        >
-          <Logo href="/" variant="dark" width={150} />
-
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-7 xl:flex"
+        {/* Live layout: hamburger-left · centered-ish logo · 'City Talks' link-right */}
+        <div className="relative flex h-full w-full items-center px-5 sm:px-8">
+          {/* Left: hamburger (drawer trigger) */}
+          <button
+            type="button"
+            aria-expanded={drawerOpen}
+            aria-controls={drawerId}
+            aria-label={drawerOpen ? "Close menu" : "Open menu"}
+            onClick={() => setDrawerOpen((v) => !v)}
+            className="ct-hamburger inline-flex h-10 w-10 items-center justify-center text-[color:var(--ct-ink)] transition-opacity hover:opacity-70"
           >
-            {navItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className="ct-nav-link relative text-[15px] font-medium tracking-tight text-[color:var(--ct-ink-2)] hover:text-[color:var(--ct-primary)]"
-                  data-active={active ? "true" : "false"}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+            <svg
+              aria-hidden="true"
+              width="22"
+              height="12"
+              viewBox="0 0 22 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect y="0" width="22" height="1.6" rx="0.8" fill="currentColor" />
+              <rect y="10" width="22" height="1.6" rx="0.8" fill="currentColor" />
+            </svg>
+          </button>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/lets-talk#contact"
-              className="ct-send-pill hidden h-11 items-center justify-center rounded-full bg-[color:var(--ct-primary)] px-5 text-[14px] font-semibold transition-colors hover:bg-[color:var(--ct-primary-700)] sm:inline-flex"
-              style={{ color: "var(--ct-on-primary)" }}
-            >
-              Send message
-            </Link>
-            <button
-              type="button"
-              aria-expanded={drawerOpen}
-              aria-controls={drawerId}
-              aria-label={drawerOpen ? "Close menu" : "Open menu"}
-              onClick={() => setDrawerOpen((v) => !v)}
-              className="ct-hamburger inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--ct-border)] bg-[color:var(--ct-bg)] text-[color:var(--ct-ink)] transition-colors hover:bg-[color:var(--ct-bg-alt)]"
-            >
-              <svg
-                aria-hidden="true"
-                width="18"
-                height="14"
-                viewBox="0 0 18 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect y="0" width="18" height="2" rx="1" fill="currentColor" />
-                <rect y="6" width="18" height="2" rx="1" fill="currentColor" />
-                <rect y="12" width="18" height="2" rx="1" fill="currentColor" />
-              </svg>
-            </button>
-          </div>
+          {/* Center: big wordmark logo */}
+          <Link
+            href="/"
+            aria-label="City Talks — αρχική"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          >
+            <Logo width={180} />
+          </Link>
+
+          {/* Right: simple 'City Talks' text link (mirrors live) */}
+          <Link
+            href="/"
+            aria-current={pathname === "/" ? "page" : undefined}
+            className="ml-auto text-[15px] font-semibold tracking-tight text-[color:var(--ct-ink-2)] hover:text-[color:var(--ct-primary)]"
+          >
+            City Talks
+          </Link>
         </div>
       </header>
 
