@@ -1,4 +1,6 @@
-import BigLogoMark from "@/app/components/BigLogoMark";
+import Image from "next/image";
+
+import { withBasePath } from "@/lib/basePath";
 
 /**
  * Pre-footer brick banner — repeats the hero mic-logo on the brick wall
@@ -53,8 +55,16 @@ export default function BrickLogoBanner() {
           }}
         />
 
-        <div className="relative z-10">
-          <BigLogoMark size={180} />
+        <div className="relative z-10 flex items-center justify-center">
+          <Image
+            src={withBasePath("/logo/city-talks-mark.png")}
+            alt="City Talks"
+            width={300}
+            height={281}
+            priority
+            className="w-auto"
+            style={{ height: "clamp(220px, 30vw, 340px)" }}
+          />
         </div>
       </div>
     </section>

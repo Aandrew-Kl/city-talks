@@ -30,7 +30,7 @@ export default function Footer() {
 
           {/* Col 2: Menu — matches live: single "City Talks" link */}
           <div>
-            <h3 className="mb-4 text-[18px] font-semibold tracking-tight text-[color:var(--ct-on-primary)]">
+            <h3 className="mb-4 text-[18px] font-semibold tracking-tight" style={{ color: "var(--ct-on-primary)" }}>
               Menu
             </h3>
             <ul className="space-y-3">
@@ -47,7 +47,7 @@ export default function Footer() {
 
           {/* Col 3: Contact us */}
           <div>
-            <h3 className="mb-4 text-[18px] font-semibold tracking-tight text-[color:var(--ct-on-primary)]">
+            <h3 className="mb-4 text-[18px] font-semibold tracking-tight" style={{ color: "var(--ct-on-primary)" }}>
               Contact us
             </h3>
             <a
