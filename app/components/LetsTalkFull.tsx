@@ -125,7 +125,18 @@ export default function LetsTalkFull() {
         {principles.map((p, i) => (
           <Reveal key={p.n} delay={i * 120} className="relative flex flex-col gap-4">
             <span aria-hidden="true" className="ct-principle-num">{p.n}</span>
-            <p className="text-[16px] leading-[1.7] text-[color:var(--ct-text)]">
+            <h3
+              className="max-w-[340px] font-[family-name:var(--ct-font-display)] text-[color:var(--ct-ink)]"
+              style={{
+                fontSize: "clamp(22px, 2.4vw, 32px)",
+                lineHeight: 1.1,
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {p.title}
+            </h3>
+            <p className="text-[15px] leading-[1.7] text-[color:var(--ct-text)]">
               {p.body}
             </p>
           </Reveal>
