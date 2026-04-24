@@ -41,15 +41,16 @@ export default function Hero(props: HeroProps = {}) {
         className="relative mx-auto w-full overflow-hidden"
         style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
       >
-        {/* Stacked images — default first, each category layered on top,
-            only the one whose column is hovered is visible. */}
+        {/* Stacked images — default always rendered; a hovered column's
+            photo fades in on top and hides the default beneath. */}
         <Image
           src={withBasePath(DEFAULT_HERO_IMAGE)}
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-center transition-opacity duration-500 ease-out"
+          style={{ opacity: hoveredIdx === null ? 1 : 0 }}
         />
         {HERO_COLUMNS.map((col, i) => (
           <Image
