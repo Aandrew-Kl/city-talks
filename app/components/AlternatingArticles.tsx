@@ -8,7 +8,12 @@ export interface AlternatingArticlesProps {
   limit?: number;
 }
 
+// Eyebrow label inside article rows — live shows 'LOCAL ADMINISTRATION'
+// for opinions-slug pieces and 'SMART CITIES' for smart-cities-slug.
 function categoryLabel(slug: CategorySlug): string {
+  if (slug === "opinions") return "LOCAL ADMINISTRATION";
+  if (slug === "smart-cities") return "SMART CITIES";
+  // Fall back to the data-driven label so unknown slugs still render.
   return categories.find((c) => c.slug === slug)?.label.toUpperCase() ?? slug;
 }
 

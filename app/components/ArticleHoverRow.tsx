@@ -86,7 +86,7 @@ export default function ArticleHoverRow({
             right: flip ? "auto" : "2%",
             left: flip ? "2%" : "auto",
             background: "var(--ct-primary)",
-            opacity: hover ? 0 : 0.92,
+            opacity: hover ? 0 : 0.85,
             transition: "opacity 0.45s ease",
           }}
         />
