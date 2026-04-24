@@ -32,6 +32,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# runtime newsletter subscribers (PII)
+/content/newsletter-subscribers.json
+
+# Claude Code runtime data and sibling worktrees
+/.claude/
 
 # vercel
 .vercel

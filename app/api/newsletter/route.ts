@@ -1,96 +1,96 @@
-/**
- * POST /api/newsletter — email-only newsletter signup handler.
- *
- * Current behaviour: validates the email with zod, writes a structured
- * `[newsletter]` JSON line to stdout, and returns `{ ok: true }`.
- *
- * ---------------------------------------------------------------------------
- *                    Future backend wiring (DO NOT INSTALL YET)
- * ---------------------------------------------------------------------------
- * Pick ONE provider when a list is created:
- *
- *   - Mailchimp (Marketing API):
- *       env:  MAILCHIMP_API_KEY, MAILCHIMP_LIST_ID, MAILCHIMP_DC (us21…)
- *       POST https://${DC}.api.mailchimp.com/3.0/lists/${LIST_ID}/members
- *         body { email_address, status: "subscribed" }
- *
- *   - Buttondown:
- *       env:  BUTTONDOWN_API_KEY
- *       POST https://api.buttondown.email/v1/subscribers
- *         headers: { Authorization: `Token ${KEY}` }
- *         body { email }
- *
- *   - ConvertKit:
- *       env:  CONVERTKIT_API_KEY, CONVERTKIT_FORM_ID
- *       POST https://api.convertkit.com/v3/forms/${FORM_ID}/subscribe
- *         body { api_key, email }
- *
- * The validation contract stays the same regardless of backend.
- * ---------------------------------------------------------------------------
- */
-
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import fs from "node:fs/promises";
+import path from "node:path";
+import {
+  NEWSLETTER_AUDIENCE_ID,
+  RESEND_ENABLED,
+  subscribeNewsletter,
+} from "../../lib/email";
 
-const newsletterSchema = z.object({
-  email: z.string().trim().email("Μη έγκυρη διεύθυνση email."),
-});
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SUBSCRIBERS_FILE = path.join(
+  process.cwd(),
+  "content",
+  "newsletter-subscribers.json",
+);
 
-export async function POST(request: Request) {
-  let raw: unknown;
+type SubscriberRecord = {
+  email: string;
+  subscribedAt: string;
+};
+
+async function appendToFile(email: string): Promise<void> {
+  const dir = path.dirname(SUBSCRIBERS_FILE);
+  await fs.mkdir(dir, { recursive: true });
+
+  let list: SubscriberRecord[] = [];
   try {
-    raw = await request.json();
+    const raw = await fs.readFile(SUBSCRIBERS_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) list = parsed as SubscriberRecord[];
+  } catch {
+    // File does not exist yet or is empty; start fresh.
+  }
+
+  const normalized = email.toLowerCase();
+  if (list.some((r) => r.email.toLowerCase() === normalized)) return;
+
+  list.push({ email, subscribedAt: new Date().toISOString() });
+  await fs.writeFile(SUBSCRIBERS_FILE, JSON.stringify(list, null, 2), "utf8");
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = (await req.json()) as { email?: string; website?: string };
+    const { email, website } = body;
+
+    // Honeypot — silently pretend success.
+    if (website && website.trim().length > 0) {
+      return NextResponse.json({
+        ok: true,
+        message: "Ευχαριστούμε! Θα σε ενημερώνουμε για νέα άρθρα και podcasts.",
+      });
+    }
+
+    if (!email || !EMAIL_RE.test(email)) {
+      return NextResponse.json(
+        { error: "Μη έγκυρο email." },
+        { status: 400 },
+      );
+    }
+
+    const trimmed = email.trim();
+
+    // Try Resend Audiences first (if configured), otherwise JSON file.
+    if (RESEND_ENABLED && NEWSLETTER_AUDIENCE_ID) {
+      const res = await subscribeNewsletter(trimmed);
+      if (!res.ok) {
+        return NextResponse.json(
+          { error: "Δεν μπορέσαμε να σε εγγράψουμε. Δοκίμασε ξανά." },
+          { status: 502 },
+        );
+      }
+    } else {
+      try {
+        await appendToFile(trimmed);
+      } catch (err) {
+        console.error("[newsletter] file write failed:", err);
+        return NextResponse.json(
+          { error: "Δεν μπορέσαμε να σε εγγράψουμε. Δοκίμασε ξανά." },
+          { status: 500 },
+        );
+      }
+      console.log("[newsletter] new subscriber appended to file:", trimmed);
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: "Ευχαριστούμε! Θα σε ενημερώνουμε για νέα άρθρα και podcasts.",
+    });
   } catch {
     return NextResponse.json(
-      { ok: false, error: "Invalid JSON payload." },
-      { status: 400 }
+      { error: "Σφάλμα επεξεργασίας." },
+      { status: 500 },
     );
   }
-
-  // Honeypot check — pre-schema so bots can't learn the hidden field exists.
-  if (
-    raw &&
-    typeof raw === "object" &&
-    "website" in raw &&
-    typeof (raw as { website: unknown }).website === "string" &&
-    (raw as { website: string }).website.length > 0
-  ) {
-    // eslint-disable-next-line no-console -- structured API audit log.
-    console.log(
-      JSON.stringify({
-        channel: "newsletter",
-        timestamp: new Date().toISOString(),
-        dropped: "honeypot",
-      })
-    );
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
-
-  const parsed = newsletterSchema.safeParse(raw);
-  if (!parsed.success) {
-    const fieldErrors: Record<string, string[]> = {};
-    for (const issue of parsed.error.issues) {
-      const key = String(issue.path[0] ?? "_");
-      (fieldErrors[key] ??= []).push(issue.message);
-    }
-    return NextResponse.json(
-      { ok: false, error: "Validation failed.", fieldErrors },
-      { status: 400 }
-    );
-  }
-
-  const data = parsed.data;
-
-  // eslint-disable-next-line no-console -- structured API audit log.
-  console.log(
-    JSON.stringify({
-      channel: "newsletter",
-      timestamp: new Date().toISOString(),
-      payload: { email: data.email },
-    })
-  );
-
-  // TODO: enrol the subscriber with the selected provider (see header comment).
-
-  return NextResponse.json({ ok: true }, { status: 200 });
 }

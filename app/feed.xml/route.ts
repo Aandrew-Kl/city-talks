@@ -1,16 +1,10 @@
-/**
- * RSS 2.0 feed at `/feed.xml`.
- *
- * Mirrors the WordPress `/feed/` endpoint users and readers (Feedly, NetNewsWire,
- * etc.) may already be subscribed to. Feeds are regenerated per revalidation
- * window — the body is cached via `Cache-Control` headers.
- */
-import { getAllArticleSummaries } from "@/lib/articles";
-import { siteMeta } from "@/app/data";
+import { getAllArticles } from "../../lib/articles";
 
-// Escape XML text nodes / attribute values.
-function xmlEscape(value: string): string {
-  return value
+const BASE =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://city-talks.gr";
+
+function escapeXml(s: string): string {
+  return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -18,56 +12,58 @@ function xmlEscape(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-// RFC-822 date string, e.g. "Wed, 10 Dec 2025 00:00:00 GMT".
-function rfc822(dateIso: string): string {
-  return new Date(`${dateIso}T00:00:00.000Z`).toUTCString();
+function cdata(s: string): string {
+  // Close any accidental ]]> inside the content.
+  return `<![CDATA[${s.replace(/\]\]>/g, "]]]]><![CDATA[>")}]]>`;
 }
 
-export async function GET(): Promise<Response> {
-  const articles = await getAllArticleSummaries();
-  const latestDate = articles[0]?.date ?? new Date().toISOString().slice(0, 10);
-  const feedUrl = `${siteMeta.url}/feed.xml`;
+export async function GET() {
+  const articles = await getAllArticles();
+  const lastBuild =
+    articles.length > 0
+      ? new Date(articles[0].date).toUTCString()
+      : new Date().toUTCString();
 
   const items = articles
     .map((a) => {
-      const link = `${siteMeta.url}/articles/${a.slug}`;
-      return [
-        "    <item>",
-        `      <title>${xmlEscape(a.title)}</title>`,
-        `      <link>${xmlEscape(link)}</link>`,
-        `      <guid isPermaLink="true">${xmlEscape(link)}</guid>`,
-        `      <pubDate>${rfc822(a.date)}</pubDate>`,
-        `      <description>${xmlEscape(a.excerpt)}</description>`,
-        `      <category>${xmlEscape(a.category)}</category>`,
-        a.author ? `      <author>noreply@city-talks.gr (${xmlEscape(a.author)})</author>` : "",
-        "    </item>",
-      ]
-        .filter(Boolean)
-        .join("\n");
+      const link = `${BASE}/articles/${a.slug}`;
+      const pubDate = new Date(a.date).toUTCString();
+      return `    <item>
+      <title>${escapeXml(a.title)}</title>
+      <link>${escapeXml(link)}</link>
+      <guid isPermaLink="true">${escapeXml(link)}</guid>
+      <description>${cdata(a.excerpt)}</description>
+      <content:encoded>${cdata(a.contentHtml)}</content:encoded>
+      <author>noreply@city-talks.gr (${escapeXml(a.author)})</author>
+      <dc:creator>${cdata(a.author)}</dc:creator>
+      <category>${escapeXml(a.category)}</category>
+      <pubDate>${pubDate}</pubDate>
+    </item>`;
     })
     .join("\n");
 
-  const body = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${xmlEscape(siteMeta.name)}</title>
-    <link>${xmlEscape(siteMeta.url)}</link>
-    <description>${xmlEscape(siteMeta.description)}</description>
+    <title>City Talks</title>
+    <link>${BASE}</link>
+    <atom:link href="${BASE}/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Ας μιλήσουμε για τους Δήμους — απόψεις, συζητήσεις και podcasts για την Τοπική Αυτοδιοίκηση.</description>
     <language>el-GR</language>
+    <lastBuildDate>${lastBuild}</lastBuildDate>
     <generator>Next.js</generator>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <pubDate>${rfc822(latestDate)}</pubDate>
-    <atom:link href="${xmlEscape(feedUrl)}" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>
 `;
 
-  return new Response(body, {
-    status: 200,
+  return new Response(xml, {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
 }
