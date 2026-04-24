@@ -1,8 +1,11 @@
+import Image from "next/image";
+
 import ArticleHoverRow from "@/app/components/ArticleHoverRow";
 import Reveal from "@/app/components/Reveal";
 import { categories, type CategorySlug } from "@/app/data";
 import { AUTHOR_PORTRAITS, FEATURED_IMAGES } from "@/lib/articleAssets";
 import { getAllArticleSummaries } from "@/lib/articles";
+import { withBasePath } from "@/lib/basePath";
 
 export interface AlternatingArticlesProps {
   limit?: number;
@@ -51,11 +54,23 @@ export default async function AlternatingArticles({
       aria-labelledby="articles-heading"
       className="relative w-full bg-[color:var(--ct-bg)]"
     >
-      {/* Section eyebrow + heading */}
+      {/* Section eyebrow + heading (left) + aerial city photo (right) */}
       <div
-        className="mx-auto flex flex-col gap-6 px-5 pt-20 pb-8 sm:px-8 sm:pt-28"
+        className="mx-auto grid grid-cols-1 items-center gap-10 px-5 pt-20 pb-8 sm:px-8 sm:pt-28 md:grid-cols-[0.9fr_1.1fr]"
         style={{ maxWidth: "var(--ct-container)" }}
       >
+        {/* Left: aerial city photo with network overlay (city-talks-00.jpg) */}
+        <Reveal className="relative aspect-[4/3] w-full overflow-hidden rounded-[24px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)]">
+          <Image
+            src={withBasePath("/hero/city-talks-00.jpg")}
+            alt="City Talks — Ας μιλήσουμε για τους Δήμους"
+            fill
+            sizes="(min-width: 900px) 50vw, 90vw"
+            className="object-cover"
+          />
+        </Reveal>
+
+        {/* Right: eyebrow + heading + subtitle + body + decorative circle */}
         <Reveal className="relative">
           <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[1.4px] text-[color:var(--ct-secondary)]">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--ct-secondary)]" />
@@ -63,35 +78,35 @@ export default async function AlternatingArticles({
           </p>
           <h2
             id="articles-heading"
-            className="mt-4 max-w-[720px] font-[family-name:var(--ct-font-display)] text-[color:var(--ct-ink)]"
+            className="mt-4 font-[family-name:var(--ct-font-display)] text-[color:var(--ct-ink)]"
             style={{
-              fontSize: "clamp(40px, 6vw, 72px)",
-              lineHeight: 1.02,
+              fontSize: "clamp(36px, 5vw, 60px)",
+              lineHeight: 1.05,
               letterSpacing: "-0.01em",
               fontWeight: 500,
             }}
           >
             Ας μιλήσουμε για τους Δήμους
           </h2>
-          <p className="mt-6 max-w-[600px] font-semibold text-[17px] text-[color:var(--ct-ink-2)]">
+          <p className="mt-5 font-semibold text-[17px] text-[color:var(--ct-ink-2)]">
             Ο λόγος σε ανθρώπους με{" "}
             <span className="text-[color:var(--ct-primary)]">
               αποδεδειγμένη γνώση στη διοίκηση δήμων
             </span>
           </p>
-          <p className="mt-4 max-w-[600px] text-[15px] leading-[1.7] text-[color:var(--ct-text)]">
+          <p className="mt-4 text-[15px] leading-[1.7] text-[color:var(--ct-text)]">
             Πολλά θέματα της καθημερινότητας και της ποιότητας ζωής μας σχετίζονται
             με το Δήμο στον οποίο κατοικούμε ή δουλεύουμε.
           </p>
-          {/* Big decorative outline circle */}
+          {/* Decorative outline circle behind the text, echoing live */}
           <span
             aria-hidden="true"
             className="ct-decor-circle"
             style={{
-              right: "5%",
-              top: "-10%",
-              width: "clamp(260px, 38vw, 440px)",
-              height: "clamp(260px, 38vw, 440px)",
+              right: "-5%",
+              top: "-20%",
+              width: "clamp(220px, 32vw, 380px)",
+              height: "clamp(220px, 32vw, 380px)",
             }}
           />
         </Reveal>
