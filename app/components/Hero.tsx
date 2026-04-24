@@ -1,4 +1,3 @@
-import BigLogoMark from "@/app/components/BigLogoMark";
 
 /**
  * Hero — has two visual modes:
@@ -90,12 +89,47 @@ export default function Hero(props: HeroProps = {}) {
           }}
         />
 
-        {/* Giant centered mic-logo */}
+        {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white.
+            Mirrors the live-site hero typography. */}
         <div
-          className="relative z-10 flex h-full w-full items-center justify-center"
+          className="relative z-10 flex h-full w-full items-center"
           style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
         >
-          <BigLogoMark />
+          <div
+            className="mx-auto w-full px-8 sm:px-16 lg:px-24"
+            style={{ maxWidth: "var(--ct-container)" }}
+          >
+            <h1
+              className="ct-hero-headline font-[family-name:var(--ct-font-display)] text-white"
+              style={{
+                fontSize: "clamp(64px, 10vw, 140px)",
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+                fontWeight: 500,
+                textShadow: "0 4px 18px rgba(13,6,14,0.35)",
+              }}
+            >
+              City Talks.
+            </h1>
+            <p
+              className="mt-6 max-w-xl text-white/95"
+              style={{
+                fontSize: "clamp(18px, 1.6vw, 24px)",
+                fontWeight: 500,
+                textShadow: "0 2px 10px rgba(13,6,14,0.35)",
+              }}
+            >
+              Your Opinion Matters!
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom vertical section labels — mirror the live hero. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden items-end justify-between px-10 pb-6 md:flex">
+          <span className="ct-side-label text-white/85">— Opinions</span>
+          <span className="ct-side-label text-white/85">Let&apos;s Talk</span>
+          <span className="ct-side-label text-white/85">Podcasts</span>
+          <span className="ct-side-label text-white/85">Smart Cities</span>
         </div>
       </div>
     </section>
