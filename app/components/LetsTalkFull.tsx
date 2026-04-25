@@ -55,13 +55,12 @@ export default function LetsTalkFull() {
         </div>
       </div>
 
-      {/* Marquee row 2 — outlined stroke */}
+      {/* Marquee row 2 — outlined stroke (SVG so Greek glyphs render with
+          a single clean stroke, not the webkit-text-stroke double-edge). */}
       <div className="ct-marquee-wrap py-4">
         <div className="ct-marquee-track" data-reverse="true">
           {[...marqueeItems.row2, ...marqueeItems.row2].map((item, i) => (
-            <span key={`r2-${i}`} className="ct-marquee-text ct-marquee-text--outline">
-              {item}
-            </span>
+            <OutlineMarqueeItem key={`r2-${i}`} text={item} />
           ))}
         </div>
       </div>
@@ -136,6 +135,8 @@ export default function LetsTalkFull() {
         </Reveal>
       </div>
 
+      {/* (See OutlineMarqueeItem at bottom of file) */}
+
       {/* Principles grid */}
       <div
         className="mx-auto mt-24 grid gap-12 px-5 sm:grid-cols-2 sm:px-8 lg:grid-cols-3"
@@ -162,5 +163,53 @@ export default function LetsTalkFull() {
         ))}
       </div>
     </section>
+  );
+}
+
+/**
+ * Single hollow-letter marquee item rendered as an SVG `<text>` with a
+ * stroke attribute and `fill="none"`. SVG strokes follow the glyph's
+ * outer contour exactly (one path per letter), so Greek characters like
+ * θ, η, α stay readable instead of getting the double-edge artifacts
+ * that `-webkit-text-stroke` produces on bold latin/Greek glyphs.
+ *
+ * The viewBox is sized lazily — we estimate a width based on character
+ * count so the SVG occupies roughly the right horizontal slice in the
+ * marquee track. The 1em letter-spacing inside SVG approximates what
+ * the text node would naturally take.
+ */
+function OutlineMarqueeItem({ text }: { text: string }) {
+  // Estimate visual width — Greek average advance ≈ 0.55em at this weight.
+  const widthEm = Math.max(text.length * 0.58, 4);
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 ${widthEm * 100} 100`}
+      style={{
+        height: "1em",
+        width: `${widthEm}em`,
+        fontSize: "clamp(72px, 13vw, 180px)",
+        padding: "0 0.4em",
+        flex: "none",
+        display: "block",
+      }}
+    >
+      <text
+        x="0"
+        y="80"
+        fill="none"
+        stroke="var(--ct-ink)"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        style={{
+          fontFamily: "var(--ct-font-display)",
+          fontSize: "100px",
+          fontWeight: 500,
+          letterSpacing: "-2px",
+        }}
+      >
+        {text}
+      </text>
+    </svg>
   );
 }
