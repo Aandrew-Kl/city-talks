@@ -370,16 +370,21 @@ body {
   paint-order: stroke fill;
 }
 .ct-marquee-text--outline {
+  /* True hollow letters: render glyph as transparent fill with a single
+     thin black stroke. We drop font-weight from 900 to 500 so the glyph
+     outline itself stays slender — at 900 the stroke traces both the
+     inside and outside of the bold glyph contour, producing the "double-
+     edge" artifacts that look broken on Greek characters. */
   color: transparent;
-  /* Thicker stroke so the outline reads cleanly at hero sizes. */
-  -webkit-text-stroke: 3px var(--ct-ink);
-  text-stroke: 3px var(--ct-ink);
-  font-weight: 900;
+  -webkit-text-stroke: 2px var(--ct-ink);
+  text-stroke: 2px var(--ct-ink);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 @media (max-width: 900px) {
   .ct-marquee-text--outline {
-    -webkit-text-stroke-width: 2px;
-    text-stroke-width: 2px;
+    -webkit-text-stroke-width: 1.4px;
+    text-stroke-width: 1.4px;
   }
 }
 
