@@ -192,8 +192,17 @@ body {
   color: var(--ct-primary);
 }
 
-.ct-drawer { pointer-events: none; }
-.ct-drawer[data-open="true"] { transform: translateX(0); pointer-events: auto; }
+/* Drawer slides in from the left. Base state is off-screen + non-interactive;
+   `data-open="true"` slides it in. We set transform here (not via Tailwind
+   `-translate-x-full`) so the data-attribute selector wins reliably. */
+.ct-drawer {
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+.ct-drawer[data-open="true"] {
+  transform: translateX(0);
+  pointer-events: auto;
+}
 .ct-drawer-overlay { pointer-events: none; }
 .ct-drawer-overlay[data-open="true"] { opacity: 1; pointer-events: auto; }
 

@@ -124,7 +124,7 @@ export default function Header() {
         id={drawerId}
         aria-label="Site menu"
         aria-hidden={!drawerOpen}
-        className="ct-drawer fixed inset-y-0 left-0 z-50 flex w-full max-w-sm -translate-x-full flex-col bg-[color:var(--ct-bg)] shadow-[var(--ct-shadow-md)] transition-transform duration-300 ease-out"
+        className="ct-drawer fixed inset-y-0 left-0 z-50 flex w-full max-w-sm flex-col bg-[color:var(--ct-bg)] shadow-[var(--ct-shadow-md)] transition-transform duration-300 ease-out"
         data-open={drawerOpen ? "true" : "false"}
       >
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
