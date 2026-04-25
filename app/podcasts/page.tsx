@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import DecorShape from "@/app/components/DecorShape";
 import LetsTalk from "@/app/components/LetsTalk";
-import Newsletter from "@/app/components/Newsletter";
 import { siteMeta } from "@/app/data";
 
 export const metadata: Metadata = {
@@ -181,7 +180,7 @@ export default function PodcastsPage() {
         </div>
       </section>
 
-      {/* Newsletter notify */}
+      {/* "Θέλετε να μάθετε πρώτοι;" — direct mailto: link, no signup form. */}
       <section
         aria-labelledby="podcast-notify"
         className="w-full bg-[color:var(--ct-bg)] py-16 sm:py-20"
@@ -197,16 +196,15 @@ export default function PodcastsPage() {
             Θέλετε να μάθετε πρώτοι;
           </h2>
           <p className="max-w-[580px] text-[16px] leading-[1.7] text-[color:var(--ct-text)]">
-            Αφήστε μας το email σας και θα σας ειδοποιήσουμε μόλις ανεβάσουμε
+            Στείλτε μας ένα email και θα σας ειδοποιήσουμε μόλις ανεβάσουμε
             το πρώτο επεισόδιο.
           </p>
-          <div className="w-full">
-            <Newsletter
-              heading="Μείνετε ενημερωμένοι."
-              description="Κανένα spam — μόνο ενημερώσεις για νέα επεισόδια και άρθρα."
-              submitLabel="Εγγραφή"
-            />
-          </div>
+          <a
+            href={`mailto:${siteMeta.email}?subject=${encodeURIComponent("Ενημέρωση για νέα επεισόδια Podcast")}`}
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--ct-primary)] px-7 py-3 text-[15px] font-semibold text-[color:var(--ct-on-primary)] shadow-[var(--ct-shadow-sm)] transition-colors hover:bg-[color:var(--ct-primary-700)]"
+          >
+            {siteMeta.email}
+          </a>
         </div>
       </section>
 

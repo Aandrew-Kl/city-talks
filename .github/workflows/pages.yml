@@ -27,15 +27,6 @@ jobs:
 
       - run: npm ci
 
-      # GitHub Pages is static hosting — strip routes that require a server.
-      # The JSON file is optional runtime state for the newsletter API that
-      # disappears together with the API route in this mode.
-      - name: Remove server-only routes
-        run: |
-          rm -rf app/api
-          rm -rf app/feed.xml
-          rm -f content/newsletter-subscribers.json
-
       - name: Build
         env:
           GITHUB_PAGES: "true"
