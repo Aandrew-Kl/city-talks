@@ -20,14 +20,18 @@ export interface ArticleHoverRowProps {
 }
 
 /**
- * One L/R alternating article block matching the live city-talks.gr
- * hover trick:
- *   • Default view: decorative purple filled bean + dashed outline circle
- *     + pink dot grid. NO photos.
- *   • On hover / focus of the row: the purple bean fades out, a rounded
- *     rectangle featured photo fades in, and (if we have one) a circular
- *     author portrait fades in overlapping the photo's bottom-left corner.
- *     The green author pill sits at the bottom centre of the portrait.
+ * Alternating L/R article block — layered exactly like the live WP design.
+ *
+ * Stacking order (back → front):
+ *   1. Decorative background  : pink dot grid + dashed outline circle
+ *                              + faint purple bean accent
+ *   2. Rectangular featured photo (always visible, rounded corners)
+ *   3. Circular author portrait (always visible, white border, sits on
+ *                                the bottom-left/right corner of #2)
+ *   4. Green author name pill (anchored to the portrait baseline)
+ *
+ * Hover lifts the photo + portrait slightly via a translate/scale tween
+ * so the row still has interactivity, but nothing is hidden by default.
  */
 export default function ArticleHoverRow({
   flip,
@@ -53,7 +57,7 @@ export default function ArticleHoverRow({
       onBlur={() => setHover(false)}
     >
       <div className="ct-article-row-media">
-        {/* --- Decorative layer (visible before hover) --- */}
+        {/* --- LAYER 1: decorative background --- */}
         <span
           aria-hidden="true"
           className="ct-decor-dots"
@@ -68,10 +72,10 @@ export default function ArticleHoverRow({
           aria-hidden="true"
           className="absolute rounded-full"
           style={{
-            width: "116%",
-            height: "116%",
-            top: "-8%",
-            left: "-8%",
+            width: "118%",
+            height: "118%",
+            top: "-9%",
+            left: "-9%",
             border: "1px dashed rgba(234, 117, 197, 0.55)",
             pointerEvents: "none",
           }}
@@ -80,23 +84,23 @@ export default function ArticleHoverRow({
           aria-hidden="true"
           className="absolute rounded-full"
           style={{
-            width: "46%",
-            height: "38%",
-            top: "4%",
-            right: flip ? "auto" : "2%",
-            left: flip ? "2%" : "auto",
+            width: "44%",
+            height: "32%",
+            top: "-6%",
+            right: flip ? "auto" : "-2%",
+            left: flip ? "-2%" : "auto",
             background: "var(--ct-primary)",
-            opacity: hover ? 0 : 0.85,
-            transition: "opacity 0.45s ease",
+            opacity: 0.18,
+            pointerEvents: "none",
           }}
         />
 
-        {/* --- Featured photo (fades in on hover) --- */}
+        {/* --- LAYER 2: rectangular featured photo (always visible) --- */}
         <Link
           href={href}
           aria-label={title}
-          className="absolute inset-0 block overflow-hidden rounded-[28px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)] transition-opacity duration-500 ease-out"
-          style={{ opacity: hover ? 1 : 0 }}
+          className="absolute inset-0 block overflow-hidden rounded-[28px] bg-[color:var(--ct-bg-alt)] shadow-[var(--ct-shadow-md)] transition-transform duration-500 ease-out"
+          style={{ transform: hover ? "scale(1.015)" : "scale(1)" }}
         >
           <Image
             src={withBasePath(featuredImage)}
@@ -107,18 +111,18 @@ export default function ArticleHoverRow({
           />
         </Link>
 
-        {/* --- Circular author portrait (fades in on hover) --- */}
+        {/* --- LAYER 3: circular author portrait (always visible) --- */}
         {authorPortrait && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute overflow-hidden rounded-full border-[5px] border-white shadow-[0_14px_32px_rgba(13,6,14,0.28)] transition-opacity duration-500 ease-out"
+            className="pointer-events-none absolute overflow-hidden rounded-full border-[5px] border-white shadow-[0_14px_32px_rgba(13,6,14,0.28)] transition-transform duration-500 ease-out"
             style={{
-              width: "46%",
+              width: "44%",
               aspectRatio: "1",
-              bottom: "6%",
+              bottom: "8%",
               left: flip ? "auto" : "8%",
               right: flip ? "8%" : "auto",
-              opacity: hover ? 1 : 0,
+              transform: hover ? "translateY(-4px)" : "translateY(0)",
             }}
           >
             <Image
@@ -131,7 +135,7 @@ export default function ArticleHoverRow({
           </span>
         )}
 
-        {/* --- Green author pill (always visible, below portrait) --- */}
+        {/* --- LAYER 4: green author name pill --- */}
         <span
           className="absolute z-10"
           style={{
