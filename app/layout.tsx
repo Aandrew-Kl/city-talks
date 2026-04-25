@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Archivo_Black, Inter } from "next/font/google";
 
 import ExtraCursor from "@/app/components/ExtraCursor";
 import Footer from "@/app/components/Footer";
@@ -11,6 +11,16 @@ import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin", "greek"],
+  display: "swap",
+});
+
+// Live uses "Archivo Black" for the outlined marquee row — it's a single-
+// path heavy display face that strokes cleanly at 1px without double-edge
+// artifacts on Greek glyphs.
+const archivoBlack = Archivo_Black({
+  variable: "--font-archivo-black",
+  weight: "400",
   subsets: ["latin", "greek"],
   display: "swap",
 });
@@ -105,7 +115,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="el" className={`${inter.variable} h-full antialiased`}>
+    <html
+      lang="el"
+      className={`${inter.variable} ${archivoBlack.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col bg-[color:var(--ct-bg)]">
         <ExtraCursor />
         <Header />

@@ -370,35 +370,23 @@ body {
   paint-order: stroke fill;
 }
 .ct-marquee-text--hollow {
-  /* Hollow letters via white fill + a tight 4-direction black text-shadow.
-     The white fill covers the inside of the glyph completely, so each
-     letter shows just the 2px black ring around its silhouette — no
-     double-edge artifacts from -webkit-text-stroke, no SVG layout
-     issues. Works identically for Greek and Latin glyphs. */
-  color: #ffffff;
-  text-shadow:
-    -2px 0 0 var(--ct-ink),
-    2px 0 0 var(--ct-ink),
-    0 -2px 0 var(--ct-ink),
-    0 2px 0 var(--ct-ink),
-    -1.5px -1.5px 0 var(--ct-ink),
-    1.5px -1.5px 0 var(--ct-ink),
-    -1.5px 1.5px 0 var(--ct-ink),
-    1.5px 1.5px 0 var(--ct-ink);
-  -webkit-text-stroke: 0;
-  font-weight: 900;
+  /* Live uses Archivo Black with 1px webkit-text-stroke. Archivo Black is
+     a single-path heavy display face (weight 400 in that font is already
+     super-bold), so the stroke traces ONE clean contour per glyph — no
+     double-edge artifacts on Greek (θ η α) or Latin chars, even spacing. */
+  font-family: var(--font-archivo-black), "Archivo Black", "Inter Black",
+    sans-serif;
+  font-weight: 400;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--ct-ink);
+  text-stroke: 1px var(--ct-ink);
+  letter-spacing: -0.5px;
+  text-shadow: none;
 }
 @media (max-width: 900px) {
   .ct-marquee-text--hollow {
-    text-shadow:
-      -1.4px 0 0 var(--ct-ink),
-      1.4px 0 0 var(--ct-ink),
-      0 -1.4px 0 var(--ct-ink),
-      0 1.4px 0 var(--ct-ink),
-      -1px -1px 0 var(--ct-ink),
-      1px -1px 0 var(--ct-ink),
-      -1px 1px 0 var(--ct-ink),
-      1px 1px 0 var(--ct-ink);
+    -webkit-text-stroke-width: 0.8px;
+    text-stroke-width: 0.8px;
   }
 }
 
