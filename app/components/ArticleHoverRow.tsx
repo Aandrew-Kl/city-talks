@@ -58,19 +58,47 @@ export default function ArticleHoverRow({
     >
       <div className="ct-article-row-media">
         {/* --- LAYER 1: decorative background --- */}
+        {/* Pink dot grid — top-left of the photo on left-aligned articles,
+            top-right on flipped (image-right) ones. Live places it as a
+            soft accent before the photo. */}
         <span
           aria-hidden="true"
           className="ct-decor-dots"
           style={{
-            top: flip ? "auto" : "-36px",
-            bottom: flip ? "-36px" : "auto",
+            top: "-36px",
             left: flip ? "auto" : "-44px",
             right: flip ? "-44px" : "auto",
           }}
         />
-        {/* Decorative dashed outline circle and purple bean removed —
-            the photo + portrait should sit on a clean canvas, only the
-            pink dot grid remains as a subtle accent. */}
+        {/* Light dashed circle ring — sits behind the photo on the opposite
+            side of the dot grid. Subtle, slow rotating only when isolated. */}
+        <span
+          aria-hidden="true"
+          className="ct-decor-circle"
+          style={{
+            width: "42%",
+            aspectRatio: "1",
+            bottom: "-12%",
+            left: flip ? "-8%" : "auto",
+            right: flip ? "auto" : "-8%",
+          }}
+        />
+        {/* Purple bean / blob — only on flipped (image-RIGHT) rows on live,
+            sitting behind the upper-outer corner of the photo. */}
+        {flip && (
+          <span
+            aria-hidden="true"
+            className="absolute z-0 rounded-full"
+            style={{
+              width: "44%",
+              aspectRatio: "1",
+              top: "-12%",
+              right: "-14%",
+              background: "var(--ct-primary)",
+              opacity: 0.95,
+            }}
+          />
+        )}
 
         {/* --- LAYER 2: rectangular featured photo (always visible) --- */}
         <Link

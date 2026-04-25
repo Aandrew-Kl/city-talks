@@ -1,7 +1,9 @@
+import Image from "next/image";
 import { Fragment } from "react";
 
 import Reveal from "@/app/components/Reveal";
 import { marqueeItems, principles, upcomingEpisodes } from "@/app/data";
+import { withBasePath } from "@/lib/basePath";
 
 /**
  * Full-width Let's Talk section with:
@@ -104,18 +106,62 @@ export default function LetsTalkFull() {
           </div>
         </Reveal>
 
-        {/* Upcoming episodes — date labels removed per user feedback */}
-        <Reveal className="mt-16 flex flex-wrap justify-center gap-6">
-          {upcomingEpisodes.map((ep) => (
-            <div
-              key={ep.date}
-              className="flex flex-col items-center justify-center rounded-[20px] border border-[color:var(--ct-border)] bg-[color:var(--ct-bg)] px-9 py-5 shadow-[var(--ct-shadow-sm)]"
-            >
-              <span className="text-[10px] font-semibold uppercase tracking-[1.6px] text-[color:var(--ct-text-muted)]">
-                Coming Next
-              </span>
-            </div>
-          ))}
+        {/* Upcoming episodes — silhouette + COMING NEXT pill + date,
+            with a pink dot grid above and a faint dashed ring underneath,
+            mirroring the live #staytuned strip. */}
+        <Reveal className="mt-16 grid w-full grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
+          {upcomingEpisodes.map((ep, i) => {
+            const silhouette =
+              i % 2 === 0
+                ? "/guests/PlaceHolderMan.jpg"
+                : "/guests/PlaceHolderWoman.jpg";
+            return (
+              <div
+                key={ep.date}
+                className="relative mx-auto flex w-full max-w-[200px] flex-col items-center"
+              >
+                {/* Pink dot grid above the card */}
+                <span
+                  aria-hidden="true"
+                  className="ct-decor-dots"
+                  style={{ top: "-18px", left: "-12px" }}
+                />
+                {/* Faint dashed ring behind/below the card */}
+                <span
+                  aria-hidden="true"
+                  className="ct-decor-circle"
+                  style={{
+                    width: "120%",
+                    aspectRatio: "1",
+                    bottom: "-18%",
+                    left: "-10%",
+                  }}
+                />
+                {/* Silhouette */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                  <Image
+                    src={withBasePath(silhouette)}
+                    alt=""
+                    fill
+                    sizes="(min-width: 900px) 18vw, 45vw"
+                    className="object-cover object-top opacity-80"
+                  />
+                </div>
+                {/* COMING NEXT + date pill anchored on the silhouette */}
+                <div
+                  className="absolute z-10 flex flex-col items-start gap-0.5 rounded-md bg-[color:var(--ct-secondary)] px-3 py-1.5 text-[color:var(--ct-on-primary)] shadow-[0_4px_12px_rgba(15,120,109,0.25)]"
+                  style={{ top: "55%", left: "12%" }}
+                >
+                  <span className="text-[9px] font-semibold uppercase tracking-[1.4px]">
+                    Coming Next
+                  </span>
+                  <span className="text-[12px] font-semibold tracking-tight">
+                    {ep.date}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </Reveal>
       </div>
 

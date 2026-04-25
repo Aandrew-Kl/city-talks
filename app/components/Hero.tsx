@@ -8,11 +8,11 @@ import { withBasePath } from "@/lib/basePath";
 /**
  * Hero — has two visual modes:
  *
- *   (a) Homepage: one default photo (`/logo/hero-your-opinion.jpg`) filling
- *       the whole hero, split visually into 4 vertical sections by white
- *       dividers. Hovering a section swaps the photo to that category's
- *       image (Opinions / Let's Talk / Podcasts / Smart Cities). "City
- *       Talks." + "Your Opinion Matters!" overlay sits on top.
+ *   (a) Homepage: brick-wall + speech-bubble photo filling the whole hero,
+ *       split visually into 4 vertical sections by white dividers. Hovering a
+ *       section swaps the photo to that category's image (Opinions / Let's
+ *       Talk / Podcasts / Smart Cities). No text overlay — the live site
+ *       keeps the hero photo clean and puts the headline in the next section.
  *   (b) Secondary pages (`/lets-talk` etc.): compact headline + intro
  *       paragraphs on plain background. Triggered by `compact` prop.
  */
@@ -100,45 +100,8 @@ export default function Hero(props: HeroProps = {}) {
           ))}
         </div>
 
-        {/* Hero overlay: "City Talks." + "Your Opinion Matters!" in white,
-            positioned top-left across the whole grid, on top of all columns. */}
-        <div
-          className="pointer-events-none absolute inset-0 z-20 flex"
-          style={{ minHeight: "clamp(480px, 78vh, 760px)" }}
-        >
-          <div
-            className="w-full px-8 pt-20 sm:px-16 sm:pt-24 lg:px-24"
-            style={{ maxWidth: "var(--ct-container)" }}
-          >
-            <h1
-              className="ct-hero-headline font-[family-name:var(--ct-font-display)] transition-opacity duration-300 ease-out"
-              style={{
-                fontSize: "clamp(48px, 7vw, 110px)",
-                lineHeight: 1,
-                letterSpacing: "-0.02em",
-                fontWeight: 700,
-                color: "#ffffff",
-                textShadow:
-                  "0 6px 24px rgba(13,6,14,0.55), 0 2px 6px rgba(13,6,14,0.4)",
-              }}
-            >
-              {hoveredIdx !== null ? HERO_COLUMNS[hoveredIdx].title : "City Talks."}
-            </h1>
-            <p
-              className="mt-4 max-w-xl transition-opacity duration-300 ease-out"
-              style={{
-                fontSize: "clamp(17px, 1.5vw, 22px)",
-                fontWeight: 500,
-                color: "rgba(255,255,255,0.96)",
-                textShadow: "0 3px 14px rgba(13,6,14,0.55)",
-              }}
-            >
-              {hoveredIdx !== null
-                ? HERO_COLUMNS[hoveredIdx].subtitle
-                : "Your Opinion Matters!"}
-            </p>
-          </div>
-        </div>
+        {/* No text overlay — live keeps the hero photo clean. The headline
+            "Ας μιλήσουμε για τους Δήμους..." lives in the next section. */}
       </div>
     </section>
   );
@@ -146,44 +109,17 @@ export default function Hero(props: HeroProps = {}) {
 
 const DEFAULT_HERO_IMAGE = "/logo/hero-your-opinion.jpg";
 
-// Per-column images + title/subtitle pairs exactly as the live WP site
-// swaps them on hover. Images come from /public/hero/ (2024/03 uploads);
-// titles/subtitles were scraped from live DOM.
+// Per-column images exactly as the live WP site swaps them on hover.
+// Images come from /public/hero/ (2024/03 uploads).
 const HERO_COLUMNS: Array<{
   label: string;
   href: string;
   image: string;
-  title: string;
-  subtitle: string;
 }> = [
-  {
-    label: "Opinions",
-    href: "/opinions",
-    image: "/hero/city-talks-001.jpg",
-    title: "City Talks.",
-    subtitle: "Your Opinion Matters!",
-  },
-  {
-    label: "Let's Talk",
-    href: "/lets-talk",
-    image: "/logo/hero-your-opinion.jpg",
-    title: "City Talks.",
-    subtitle: "Ας μιλήσουμε για τους Δήμους, ας κάνουμε City Talks!",
-  },
-  {
-    label: "Podcasts",
-    href: "/podcasts",
-    image: "/hero/city-talks-03-podcast.jpg",
-    title: "Podcast City Talks.",
-    subtitle: "Ακολουθήστε τα Podcast του City Talks!",
-  },
-  {
-    label: "Smart Cities",
-    href: "/smart-cities",
-    image: "/hero/city-talks-04-urban-smart-cities.jpg",
-    title: "Smart Cities.",
-    subtitle: "Έξυπνες πόλεις - Έξυπνες Ιδέες - Έξυπνοι Διάλογοι.",
-  },
+  { label: "Opinions",    href: "/opinions",     image: "/hero/city-talks-001.jpg" },
+  { label: "Let's Talk",  href: "/lets-talk",    image: "/logo/hero-your-opinion.jpg" },
+  { label: "Podcasts",    href: "/podcasts",     image: "/hero/city-talks-03-podcast.jpg" },
+  { label: "Smart Cities", href: "/smart-cities", image: "/hero/city-talks-04-urban-smart-cities.jpg" },
 ];
 
 /**

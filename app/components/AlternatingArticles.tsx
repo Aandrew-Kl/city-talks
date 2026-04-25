@@ -38,6 +38,18 @@ const HOMEPAGE_SLUGS = [
   "proslipseis-mono-sta-xartia",
 ];
 
+// Per-article italic subtitle as it appears on live (rendered between the
+// title and the excerpt). Not in the markdown frontmatter — pulled here so
+// the homepage stays in sync without touching the article content files.
+const ARTICLE_SUBTITLES: Record<string, string> = {
+  "diaxeirisi-nerou": "ένα στοίχημα που δεν πρέπει να χαθεί….",
+  "poleodomia-kai-dimoi": "Τοπική υπόθεση η ανάπτυξη",
+  "to-leksilogio-enos-aftodioikitikoy":
+    "Αυτοτέλεια, Οργάνωση, Αποτελεσματικότητα, Ποιότητα Ζωής, Εξυπηρέτηση, Πόροι.",
+  "telos-stin-tafi-aporrimmatwn": "Επενδύσεις στη Βιώσιμη Διαχείρισή τους τώρα!",
+  "proslipseis-mono-sta-xartia": "Προσλήψεις μόνο στα χαρτιά",
+};
+
 export default async function AlternatingArticles({
   limit = 6,
 }: AlternatingArticlesProps) {
@@ -118,7 +130,9 @@ export default async function AlternatingArticles({
         style={{ maxWidth: "var(--ct-container)" }}
       >
         {articles.map((a, idx) => {
-          const flip = idx % 2 === 1;
+          // Live alternates image-RIGHT first (Διαχείριση Νερού), then LEFT,
+          // RIGHT, LEFT… so even indexes get flip=true.
+          const flip = idx % 2 === 0;
           const href = `/articles/${a.slug}`;
           const accentColor =
             a.category === "smart-cities"
@@ -135,6 +149,7 @@ export default async function AlternatingArticles({
                 categoryLabel={categoryLabel(a.category)}
                 accentColor={accentColor}
                 title={a.title}
+                subtitle={ARTICLE_SUBTITLES[a.slug]}
                 excerpt={a.excerpt}
                 author={a.author}
                 featuredImage={FEATURED_IMAGES[a.slug] ?? a.image}
