@@ -18,10 +18,14 @@ const inter = Inter({
 // Live uses "Archivo Black" for the outlined marquee row — it's a single-
 // path heavy display face that strokes cleanly at 1px without double-edge
 // artifacts on Greek glyphs.
+// Archivo Black ships Latin only on Google Fonts. Greek glyphs in the
+// outlined marquee will use the system fallback we list in the CSS rule
+// (matches live, where Greek text in `font-family: "Archivo Black"` also
+// falls through to the OS heavy sans).
 const archivoBlack = Archivo_Black({
   variable: "--font-archivo-black",
   weight: "400",
-  subsets: ["latin", "greek"],
+  subsets: ["latin"],
   display: "swap",
 });
 
