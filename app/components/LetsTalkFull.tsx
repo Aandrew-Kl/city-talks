@@ -104,18 +104,15 @@ export default function LetsTalkFull() {
           </div>
         </Reveal>
 
-        {/* Upcoming episodes */}
+        {/* Upcoming episodes — date labels removed per user feedback */}
         <Reveal className="mt-16 flex flex-wrap justify-center gap-6">
           {upcomingEpisodes.map((ep) => (
             <div
               key={ep.date}
-              className="flex flex-col items-start gap-2 rounded-[20px] border border-[color:var(--ct-border)] bg-[color:var(--ct-bg)] px-7 py-5 shadow-[var(--ct-shadow-sm)]"
+              className="flex flex-col items-center justify-center rounded-[20px] border border-[color:var(--ct-border)] bg-[color:var(--ct-bg)] px-9 py-5 shadow-[var(--ct-shadow-sm)]"
             >
               <span className="text-[10px] font-semibold uppercase tracking-[1.6px] text-[color:var(--ct-text-muted)]">
                 Coming Next
-              </span>
-              <span className="font-[family-name:var(--ct-font-display)] text-[20px] font-black tracking-tight text-[color:var(--ct-ink)]">
-                {ep.date}
               </span>
             </div>
           ))}

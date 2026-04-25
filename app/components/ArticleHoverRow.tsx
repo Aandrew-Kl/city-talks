@@ -68,32 +68,9 @@ export default function ArticleHoverRow({
             right: flip ? "-44px" : "auto",
           }}
         />
-        <span
-          aria-hidden="true"
-          className="absolute rounded-full"
-          style={{
-            width: "118%",
-            height: "118%",
-            top: "-9%",
-            left: "-9%",
-            border: "1px dashed rgba(234, 117, 197, 0.55)",
-            pointerEvents: "none",
-          }}
-        />
-        <span
-          aria-hidden="true"
-          className="absolute rounded-full"
-          style={{
-            width: "44%",
-            height: "32%",
-            top: "-6%",
-            right: flip ? "auto" : "-2%",
-            left: flip ? "-2%" : "auto",
-            background: "var(--ct-primary)",
-            opacity: 0.18,
-            pointerEvents: "none",
-          }}
-        />
+        {/* Decorative dashed outline circle and purple bean removed —
+            the photo + portrait should sit on a clean canvas, only the
+            pink dot grid remains as a subtle accent. */}
 
         {/* --- LAYER 2: rectangular featured photo (always visible) --- */}
         <Link
