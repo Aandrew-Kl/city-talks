@@ -1,7 +1,6 @@
 
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import { withBasePath } from "@/lib/basePath";
@@ -13,7 +12,8 @@ import { withBasePath } from "@/lib/basePath";
  *       split visually into 4 vertical sections by white dividers. Hovering a
  *       section swaps the photo to that category's image (Opinions / Let's
  *       Talk / Podcasts / Smart Cities) and the white "City Talks." +
- *       subtitle overlay swaps in sync.
+ *       subtitle overlay swaps in sync. Columns are NOT clickable — the
+ *       category pages will be reached from a side nav, not the hero.
  *   (b) Secondary pages (`/lets-talk` etc.): compact headline + intro
  *       paragraphs on plain background. Triggered by `compact` prop.
  */
@@ -60,14 +60,14 @@ export default function Hero(props: HeroProps = {}) {
           />
         ))}
 
-        {/* 4 hover/click columns + vertical dividers. Next.js <Link> auto-
-            prefixes the basePath (`/city-talks` on GH Pages) so clicks
-            land at /city-talks/opinions/ etc. instead of 404'ing. */}
+        {/* 4 hover columns + vertical dividers. Hover-only — no click /
+            navigation; the user wants category pages reached from a side
+            nav, not by clicking the hero photo. Plain <div> instead of a
+            link keeps the photo-swap interaction without 404 risk. */}
         <div className="absolute inset-0 z-10 grid grid-cols-4">
           {HERO_COLUMNS.map((col, i) => (
-            <Link
+            <div
               key={col.href}
-              href={col.href}
               aria-label={col.label}
               onMouseEnter={() => setHoveredIdx(i)}
               onFocus={() => setHoveredIdx(i)}
@@ -98,7 +98,7 @@ export default function Hero(props: HeroProps = {}) {
               >
                 — {col.label}
               </span>
-            </Link>
+            </div>
           ))}
         </div>
 
