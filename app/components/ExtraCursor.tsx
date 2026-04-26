@@ -6,8 +6,8 @@ import { useEffect, useRef } from "react";
  * Custom purple round cursor that trails the mouse — matches the live
  * city-talks.gr `.lqd-extra-cursor` used by the Liquid Themes "Hub" theme.
  *
- * Fixed 28x28 filled circle, --ct-primary, `mix-blend-mode: multiply`, with
- * a smooth follow animation via requestAnimationFrame (easing toward the
+ * 32x32 filled circle, --ct-primary, `mix-blend-mode: multiply`, with a
+ * smooth follow animation via requestAnimationFrame (easing toward the
  * real pointer). Hidden on touch / reduced-motion environments.
  */
 export default function ExtraCursor() {
@@ -65,10 +65,10 @@ export default function ExtraCursor() {
         position: "fixed",
         top: 0,
         left: 0,
-        width: 80,
-        height: 80,
-        marginLeft: -40,
-        marginTop: -40,
+        width: 32,
+        height: 32,
+        marginLeft: -16,
+        marginTop: -16,
         borderRadius: "50%",
         background: "var(--ct-primary)",
         pointerEvents: "none",
