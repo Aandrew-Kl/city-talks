@@ -30,9 +30,12 @@ const LEGACY_PAGES = [
 ];
 
 // When GITHUB_PAGES=true we build a fully static site (no API routes,
-// no image optimization, basePath matches the repo name for
-// <owner>.github.io/<repo>/). Local `npm run dev` and Vercel keep the
+// no image optimization). Local `npm run dev` and Vercel keep the
 // regular server-rendering flow.
+//
+// The site is served from the apex domain `city-talks.gr` (via the
+// public/CNAME file picked up by GitHub Pages), so no `basePath` /
+// `assetPrefix` — assets resolve at /.
 const isGhPages = process.env.GITHUB_PAGES === "true";
 
 const nextConfig: NextConfig = {
@@ -40,8 +43,6 @@ const nextConfig: NextConfig = {
   ...(isGhPages
     ? {
         output: "export" as const,
-        basePath: "/city-talks",
-        assetPrefix: "/city-talks",
         trailingSlash: true,
       }
     : {}),
