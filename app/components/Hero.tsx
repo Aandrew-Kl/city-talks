@@ -125,7 +125,7 @@ export default function Hero(props: HeroProps = {}) {
                   "0 6px 24px rgba(13,6,14,0.55), 0 2px 6px rgba(13,6,14,0.4)",
               }}
             >
-              {hoveredIdx !== null ? HERO_COLUMNS[hoveredIdx].title : "City Talks."}
+              {hoveredIdx !== null ? HERO_COLUMNS[hoveredIdx].title : "City Talks"}
             </h1>
             <p
               className="mt-4 max-w-xl transition-opacity duration-300 ease-out"
@@ -163,28 +163,28 @@ const HERO_COLUMNS: Array<{
     label: "Opinions",
     href: "/opinions",
     image: "/hero/city-talks-001.jpg",
-    title: "City Talks.",
+    title: "City Talks",
     subtitle: "Your Opinion Matters!",
   },
   {
     label: "Let's Talk",
     href: "/lets-talk",
     image: "/logo/hero-your-opinion.jpg",
-    title: "City Talks.",
+    title: "City Talks",
     subtitle: "Ας μιλήσουμε για τους Δήμους, ας κάνουμε City Talks!",
   },
   {
     label: "Podcasts",
     href: "/podcasts",
     image: "/hero/city-talks-03-podcast.jpg",
-    title: "Podcast City Talks.",
+    title: "Podcast City Talks",
     subtitle: "Ακολουθήστε τα Podcast του City Talks!",
   },
   {
     label: "Smart Cities",
     href: "/smart-cities",
     image: "/hero/city-talks-04-urban-smart-cities.jpg",
-    title: "Smart Cities.",
+    title: "Smart Cities",
     subtitle: "Έξυπνες πόλεις - Έξυπνες Ιδέες - Έξυπνοι Διάλογοι.",
   },
 ];
