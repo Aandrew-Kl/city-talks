@@ -1,18 +1,13 @@
 /**
- * Prefix the Next.js `basePath` (e.g. `/city-talks` when deployed to GitHub
- * Pages) onto an absolute-root path. Assets inside `/public` are served at
- * `<basePath>/<path>`, but Next doesn't auto-prefix them for us; we have
- * to be explicit when passing the URL as an `src`.
- *
- * Locally and on Vercel `NEXT_PUBLIC_BASE_PATH` is empty, so this is a
- * no-op. On GitHub Pages the workflow sets it to `/city-talks`.
+ * Used to be the basePath prefixer when the site was served from
+ * `aandrew-kl.github.io/city-talks/`. Now that we're on the apex
+ * `city-talks.gr`, all `/public` assets are served at `/`, so this is a
+ * pass-through. The function is kept (and exported) so existing call
+ * sites (`<Image src={withBasePath("/foo.jpg")} />`) keep compiling
+ * without a sweep across the codebase.
  */
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+export const BASE_PATH = "";
 
 export function withBasePath(path: string): string {
-  if (!path.startsWith("/")) return path; // already absolute or external
-  if (!BASE_PATH) return path;
-  // Avoid double-prefix if the caller already did it.
-  if (path.startsWith(`${BASE_PATH}/`)) return path;
-  return `${BASE_PATH}${path}`;
+  return path;
 }
